@@ -19,5 +19,6 @@ from django.urls import include, path
 
 urlpatterns = [
     path('', include('CoWinApp.urls')),
+    path('', include('rest_framework.urls')),
     path('admin/', admin.site.urls)
 ]
