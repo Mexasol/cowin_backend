@@ -22,6 +22,7 @@ urlpatterns = [
 
                   path("auth/signup/", views.postauthuser, name="authuser"),
                   path("auth/login/", views.loginUser, name="authuserlogin"),
+                  path("auth-social/", views.register_or_login, name="register_or_login"),
                   path("auth/update/password/", views.update_password, name="update_password"),
                   path("auth/update/profile-image/", views.update_profile, name="update_profile"),
                   path('auth/delete/profile-image/', views.delete_profile_image, name='delete_profile_image'),

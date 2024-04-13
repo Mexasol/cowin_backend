@@ -126,6 +126,39 @@ def loginUser(request):
         return Response({"response": error_message}, status=status.HTTP_404_NOT_FOUND)
 
 
+@api_view(['POST'])
+def register_or_login(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+
+    # Check if user with given email already exists
+    user = User.objects.filter(email=email).first()
+    if user:
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+        return Response({
+            'message': 'User with this email already exists.',
+            'username': user.username,
+            'email': user.email,
+            'access_token': str(access),
+            'refresh_token': str(refresh)
+        })
+    else:
+        # User doesn't exist, create a new user
+        user = User.objects.create_user(username=username, email=email)
+        # Create a corresponding entry in the Users table
+        Users.objects.get_or_create(userId=user)
+        # Generate tokens
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+        return Response({
+            'username': user.username,
+            'email': user.email,
+            'access_token': str(access),
+            'refresh_token': str(refresh)
+        })
+
+
 @sync_to_async
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
