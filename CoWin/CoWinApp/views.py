@@ -126,39 +126,6 @@ def loginUser(request):
         return Response({"response": error_message}, status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['POST'])
-def register_or_login(request):
-    username = request.data.get('username')
-    email = request.data.get('email')
-
-    # Check if user with given email already exists
-    user = User.objects.filter(email=email).first()
-    if user:
-        refresh = RefreshToken.for_user(user)
-        access = refresh.access_token
-        return Response({
-            'message': 'User with this email already exists.',
-            'username': user.username,
-            'email': user.email,
-            'access_token': str(access),
-            'refresh_token': str(refresh)
-        })
-    else:
-        # User doesn't exist, create a new user
-        user = User.objects.create_user(username=username, email=email)
-        # Create a corresponding entry in the Users table
-        Users.objects.get_or_create(userId=user)
-        # Generate tokens
-        refresh = RefreshToken.for_user(user)
-        access = refresh.access_token
-        return Response({
-            'username': user.username,
-            'email': user.email,
-            'access_token': str(access),
-            'refresh_token': str(refresh)
-        })
-
-
 @sync_to_async
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
@@ -392,7 +359,7 @@ def edit_goals(request):
             user_id_from_token = access_token['user_id']
             User.objects.get(id=user_id_from_token)
         except Exception as e:
-            return Response({"error": f"You are not authorized {e}"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "You are not authorized"}, status=status.HTTP_400_BAD_REQUEST)
 
         goal_id = request.data.get('goal_id')
         try:
@@ -410,7 +377,7 @@ def edit_goals(request):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({"response": f"Something went wrong {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"response": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @sync_to_async
@@ -423,7 +390,7 @@ def get_all_goals(request):
         serializer = SetGoalsSerializer(goals, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({"response": f"Something went wrong {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"response": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @sync_to_async
@@ -436,7 +403,7 @@ def get_archived_goals(request):
         serializer = SetGoalsSerializer(active_goals, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({"response": f"Something went wrong {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"response": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @sync_to_async
@@ -449,7 +416,7 @@ def get_unarchived_goals(request):
         serializer = SetGoalsSerializer(active_goals, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({"response": f"Something went wrong {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"response": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @sync_to_async
@@ -463,7 +430,7 @@ def delete_goal(request):
             user_id_from_token = access_token['user_id']
             user = User.objects.get(id=user_id_from_token)
         except Exception as e:
-            return Response({"error": f"You are not authorized {e}"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "You are not authorized"}, status=status.HTTP_400_BAD_REQUEST)
 
         goal_id = request.data.get("goal_id")
         goal_to_delete = SetGoals.objects.get(userId=user, id=goal_id)
@@ -472,7 +439,7 @@ def delete_goal(request):
     except User.DoesNotExist:
         return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
-        return Response({"error": f"Something went wrong {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 """
@@ -655,7 +622,7 @@ def DeleteCoverLetter(request):
     except User.DoesNotExist:
         return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
-        return Response({"error": f"Something went wrong {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @sync_to_async
@@ -668,7 +635,7 @@ def GetAllCoverLetter(request):
         serializer = CoverLetterSerializer(resume, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({"response": f"Something went wrong {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"response": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 """
@@ -686,9 +653,11 @@ def FlashCardQA(request):
         # Get all the questions and answers with category and subcategory
         flashcard_qa = FlashCardInterviewQuestion.objects.all()
         serializer = FlashCardInterviewQuestionsSerializer(flashcard_qa, many=True)
+
         # Extracting unique category names from the serializer data
         category_names = set(item['category_name'] for item in serializer.data if item['category_name'])
 
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({"response": f"Something went wrong {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        print("Error:", e)  # Print the actual error message
+        return Response({"response": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

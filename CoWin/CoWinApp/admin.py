@@ -1,8 +1,6 @@
 from django.contrib import admin
 from .models import SetGoals, Users, ResumeCV, CoverLetter, AICategory, AISubcategory, FlashCardInterviewQuestion
 
-admin.site.site_header = 'Cowin Admin'
-
 
 @admin.register(Users)
 class UsersAdmin(admin.ModelAdmin):
