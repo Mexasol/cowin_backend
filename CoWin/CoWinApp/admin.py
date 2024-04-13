@@ -2,12 +2,12 @@ from django.contrib import admin
 from .models import SetGoals, Users, ResumeCV, CoverLetter, AICategory, AISubcategory, FlashCardInterviewQuestion
 
 
+admin.site.site_header = 'Cowin Admin'
 @admin.register(Users)
 class UsersAdmin(admin.ModelAdmin):
     # def get_list_display1(self, request):
     #     return [field.name for field in Users._meta.fields]
     list_display = ('userId', 'profile')
-
 
 @admin.register(SetGoals)
 class SetGoalsAdmin(admin.ModelAdmin):
