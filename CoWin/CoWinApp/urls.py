@@ -40,8 +40,8 @@ urlpatterns = [
                   path("subdomain1/set-goals", views.set_goals, name="set_goals"),
                   path("subdomain1/edit-goals", views.edit_goals, name="edit_goals"),
                   path("subdomain1/get-all-goals", views.get_all_goals, name="get_all_goals"),
-                  path("subdomain1/archived-goals", views.get_archived_goals, name="archived_goals"),
-                  path("subdomain1/unarchived-goals", views.get_unarchived_goals, name="unarchived_goals"),
+                  path("subdomain1/inactive-goals", views.get_archived_goals, name="inactive_goals"),
+                  path("subdomain1/active-goals", views.get_unarchived_goals, name="active_goals"),
                   path("subdomain1/delete-goals", views.delete_goal, name="delete_goal"),
 
                   # ---------------- RESUME SECTION ------------------
@@ -49,17 +49,24 @@ urlpatterns = [
                   path("subdomain1/upload-resume", views.UploadResume, name="upload_resume"),
                   path("subdomain1/update/resume/<int:resume_id>", views.UpdateResume, name="update_resume"),
                   path("subdomain1/get-all-resume/", views.GetAllResume, name="get_all_resume"),
+                  path('subdomain1/download-resume/<int:pk>/', views.download_resume, name='download_resume'),
                   path("subdomain1/delete-resume/", views.DeleteResume, name="delete_resume"),
 
                   # ---------------- COVER LETTER SECTION ------------------
 
-                  path("subdomain1/upload-coverletter", views.UploadCoverLetter, name="upload_coverletter"),
+                  path("subdomain1/upload-coverletter", views.UploadCoverLetter, name="upload_cover_letter"),
                   path("subdomain1/update/coverletter/<int:coverletter>", views.UpdateCoverLetter,
-                       name="update_coverletter"),
-                  path("subdomain1/get-all-coverletter/", views.GetAllCoverLetter, name="get_all_coverletter"),
-                  path("subdomain1/delete-coverletter/", views.DeleteCoverLetter, name="delete_coverletter"),
+                       name="update_cover_letter"),
+                  path('subdomain1/download-cover-letter/<int:pk>/', views.download_cover_letter,
+                       name='download_cover_letter'),
+                  path("subdomain1/get-all-coverletter/", views.GetAllCoverLetter, name="get_all_cover_letter"),
+                  path("subdomain1/delete-coverletter/", views.DeleteCoverLetter, name="delete_cover_letter"),
 
                   # ----------------- Flash Card SECTION ------------------
                   path("subdomain1/flashcard/", views.FlashCardQA, name="flashcard"),
+
+                  # ----------------- Free Mock Interview SECTION ------------------
+
+                  # path("FreeMockInterviews/", views.FreeMockInterviews, name="FreeMockInterview"),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

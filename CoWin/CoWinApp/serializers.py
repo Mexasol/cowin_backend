@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_decode
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion, AICategory, AISubcategory, Users
+from .models import SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion, AICategory, AISubcategory, Users, \
+    FreeMockInterview
 from rest_framework import serializers
 
 
@@ -88,10 +89,7 @@ class SetGoalsSerializer(serializers.ModelSerializer):
             'position',
             'company_name',
             'location',
-            'job_category',
-            'job_speciality',
-            'job_keywords',
-            'isArchived'
+            'isActive'
         ]
 
 
@@ -103,7 +101,6 @@ class ResumeCVSerializer(serializers.ModelSerializer):
             'id',
             'CV_document',
             'upload_date',
-            'isPrimary',
             'isActive',
         ]
         extra_kwargs = {
@@ -119,7 +116,6 @@ class CoverLetterSerializer(serializers.ModelSerializer):
             'id',
             'Letter_document',
             'upload_date',
-            'isPrimary',
             'isActive',
         ]
 
@@ -143,3 +139,16 @@ class FlashCardInterviewQuestionsSerializer(serializers.ModelSerializer):
 
     def get_subcategory_name(self, obj):
         return obj.subcategory.name if obj.subcategory else None
+
+
+# class FreeMockInterviewSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = FreeMockInterview
+#         fields = '__all__'
+#
+#     def to_representation(self, instance):
+#         representation = super().to_representation(instance)
+#         representation.pop('goals')
+#         representation['position'] = SetGoalsSerializer(instance.goals).data['position'] if instance.goals else None
+#         representation['company'] = SetGoalsSerializer(instance.goals).data['company_name'] if instance.goals else None
+#         return representation
