@@ -1,5 +1,5 @@
 import random
-from .models import Users, SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion
+from .models import Users, SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion, FreeMockInterview
 from .serializers import UserSerializer, SetGoalsSerializer, ResumeCVSerializer, \
     CoverLetterSerializer, FlashCardInterviewQuestionsSerializer, ForgetPasswordSerializer, ResetPasswordSerializer
 from django.contrib.auth.hashers import check_password
@@ -19,6 +19,7 @@ from django.conf import settings
 from datetime import timedelta
 from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.http import HttpResponse
 
 """
 -----------------------------------------------------
@@ -432,7 +433,7 @@ def get_all_goals(request):
 def get_archived_goals(request):
     try:
         user_id = request.user.id
-        active_goals = SetGoals.objects.filter(userId=user_id, isArchived=True)
+        active_goals = SetGoals.objects.filter(userId=user_id, isActive=False)
         serializer = SetGoalsSerializer(active_goals, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
@@ -445,7 +446,7 @@ def get_archived_goals(request):
 def get_unarchived_goals(request):
     try:
         user_id = request.user.id
-        active_goals = SetGoals.objects.filter(userId=user_id, isArchived=False)
+        active_goals = SetGoals.objects.filter(userId=user_id, isActive=True)
         serializer = SetGoalsSerializer(active_goals, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
@@ -535,6 +536,18 @@ def UpdateResume(request, resume_id):
 
     except Exception as e:
         return Response({"response": f"Something went wrong: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def download_resume(request, pk):
+    try:
+        resume = ResumeCV.objects.get(pk=pk)
+        resume_file = resume.CV_document
+        response = HttpResponse(resume_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{resume_file.name}"'
+        return response
+    except ResumeCV.DoesNotExist:
+        return Response("Resume not found", status=status.HTTP_404_NOT_FOUND)
 
 
 @sync_to_async
@@ -635,6 +648,18 @@ def UpdateCoverLetter(request, coverletter):
         return Response({"response": f"Something went wrong: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET'])
+def download_cover_letter(request, pk):
+    try:
+        cover_letter = CoverLetter.objects.get(pk=pk)
+        cover_letter_file = cover_letter.Letter_document
+        response = HttpResponse(cover_letter_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{cover_letter_file.name}"'
+        return response
+    except CoverLetter.DoesNotExist:
+        return Response("CoverLetter not found", status=status.HTTP_404_NOT_FOUND)
+
+
 @sync_to_async
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -692,5 +717,61 @@ def FlashCardQA(request):
 
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     except Exception as e:
-        print("Error:", e)  # Print the actual error message
         return Response({"response": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+"""
+-----------------------------------------------------
+------------- FreeMockInterviews SECTION ---------------
+-----------------------------------------------------
+"""
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def FreeMockInterviews(request):
+#     user = request.user
+#     try:
+#         mock_interview = FreeMockInterview.objects.filter(userId=user)
+#         serializer = FreeMockInterviewSerializer(mock_interview, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#     except FreeMockInterview.DoesNotExist:
+#         return Response({"message": "Mock interview not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+
+from datetime import datetime
+
+
+# @api_view(['GET', 'POST'])
+# def FreeMockInterviews(request):
+#     user = request.user
+#
+#     if request.method == 'GET':
+#         try:
+#             mock_interviews = FreeMockInterview.objects.filter(userId=user)
+#             serializer = FreeMockInterviewSerializer(mock_interviews, many=True)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         except FreeMockInterview.DoesNotExist:
+#             return Response({"message": "Mock interviews not found"}, status=status.HTTP_404_NOT_FOUND)
+#
+#     elif request.method == 'POST':
+#         mutable_data = request.data.copy()
+#         user_id = user.id
+#         mutable_data['userId'] = user_id
+#         interview_time_str = mutable_data.get('InterviewTime')
+#         format_string = '%Y-%m-%dT%H:%M:%S.%fZ'
+#
+#         try:
+#             interview_time = datetime.strptime(interview_time_str, format_string)
+#         except ValueError as e:
+#             return Response({"message": "Invalid datetime format"}, status=status.HTTP_400_BAD_REQUEST)
+#
+#         mutable_data['InterviewTime'] = interview_time
+#
+#         serializer = FreeMockInterviewSerializer(data=mutable_data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

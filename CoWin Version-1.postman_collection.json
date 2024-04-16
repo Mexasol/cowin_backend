@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "35df18a7-5703-4d19-b3dc-5a808dff351f",
+		"_postman_id": "07a3880e-fb58-4a12-8f31-f881621736b7",
 		"name": "CoWin Version-1",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "29702969"
+		"_exporter_id": "15580901"
 	},
 	"item": [
 		{
@@ -19,12 +19,12 @@
 							"formdata": [
 								{
 									"key": "fullname",
-									"value": "Test Admin",
+									"value": "Test User Mexa",
 									"type": "text"
 								},
 								{
 									"key": "email",
-									"value": "testadmin0@gmail.com",
+									"value": "zeeshan.afzal.37051@gmail.com",
 									"type": "text"
 								},
 								{
@@ -35,13 +35,12 @@
 								{
 									"key": "is_superuser",
 									"value": "false",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "profile",
 									"type": "file",
-									"src": "/Users/hf/Documents/Disk - B/Office Running/CoWin_Backend/garbage/download.jpeg",
+									"src": [],
 									"disabled": true
 								}
 							]
@@ -72,12 +71,12 @@
 							"formdata": [
 								{
 									"key": "username",
-									"value": "testadmin0@gmail.com",
+									"value": "zeeshan.afzal.37051@gmail.com",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "test1234",
+									"value": "test@123",
 									"type": "text"
 								}
 							]
@@ -89,6 +88,38 @@
 							],
 							"path": [
 								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Social-auth Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "zeeshanafzal",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "zeeshan.afzal.37051@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}register-login/",
+							"host": [
+								"{{base_url}}register-login"
+							],
+							"path": [
 								""
 							]
 						}
@@ -246,6 +277,49 @@
 								""
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forget Paasword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "zeeshan.afzal.37051@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}forget-password/",
+							"host": [
+								"{{base_url}}forget-password"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OTP Verification",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
@@ -437,7 +511,7 @@
 							"response": []
 						},
 						{
-							"name": "Get Archive Goals",
+							"name": "Get InActive Goals",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -520,7 +594,7 @@
 							"response": []
 						},
 						{
-							"name": "Get UnArchive Goals",
+							"name": "Get Acitve Goals",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -652,7 +726,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzk2MTExNzg4LCJpYXQiOjE3MDk3MTE3ODgsImp0aSI6Ijg0NTgxMzg5YWJiMjRiYjU4ZTgwYzRjZGNlN2YyYTkzIiwidXNlcl9pZCI6M30.G15GojDhQS7bOktmfMCppzpgMZPv3QAZJ8SgmdCSAFI",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzk4NzExMDIzLCJpYXQiOjE3MTIzMTEwMjMsImp0aSI6IjcwODIwNWU5MGE4ZDQxMTNhZGRlMTlkNDBiMjg5ODJhIiwidXNlcl9pZCI6Mjh9.NHJdPaqRLCvnSgb2Frpaosuv5FsrRa6RD1hzK3mLvYY",
 											"type": "string"
 										}
 									]
@@ -665,7 +739,7 @@
 										{
 											"key": "CV_document",
 											"type": "file",
-											"src": "/Users/hf/Documents/Disk - A/Report On AI.docx"
+											"src": "/C:/Users/WISE MARKET/Downloads/test_pdf2.pdf"
 										},
 										{
 											"key": "isPrimary",
@@ -799,6 +873,14 @@
 										""
 									]
 								}
+							},
+							"response": []
+						},
+						{
+							"name": "Download Resume",
+							"request": {
+								"method": "GET",
+								"header": []
 							},
 							"response": []
 						}
@@ -966,6 +1048,48 @@
 							"response": []
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "FreeMockInterview",
+			"item": [
+				{
+					"name": "MockInterviews",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzk5NTYxNjMzLCJpYXQiOjE3MTMxNjE2MzMsImp0aSI6IjlmZDc1OTBlMDQ2NjRlMDFhZGQ2NWY4Yzg5MjIxMGEzIiwidXNlcl9pZCI6MjJ9.h9d0d5tKIstmwUNNScWiM8vyEb9xnRc2lc4FDBxY0yc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "InterviewTime",
+									"value": "2024-04-15T12:42:13.563626Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}FreeMockInterviews/",
+							"host": [
+								"{{base_url}}FreeMockInterviews"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

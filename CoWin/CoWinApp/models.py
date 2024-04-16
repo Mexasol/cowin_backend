@@ -24,10 +24,7 @@ class SetGoals(models.Model):
     position = models.CharField(max_length=500, null=True, blank=True, default='null')
     company_name = models.CharField(max_length=500, null=True, blank=True, default='null')
     location = models.CharField(max_length=500, null=True, blank=True, default='null')
-    job_category = models.CharField(max_length=500, null=True, blank=True, default='null')
-    job_speciality = models.CharField(max_length=500, null=True, blank=True, default='null')
-    job_keywords = models.CharField(max_length=500, null=True, blank=True, default='null')
-    isArchived = models.BooleanField(null=True, blank=True, default=True)
+    isActive = models.BooleanField(null=True, blank=True, default=True)
 
     def __str__(self):
         return self.company_name
@@ -37,7 +34,6 @@ class ResumeCV(models.Model):
     userId = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='User_CV')
     CV_document = models.FileField(upload_to='CV_Documents/', null=True, blank=True)
     upload_date = models.DateField(auto_now_add=True, null=True, blank=True)
-    isPrimary = models.BooleanField(null=True, blank=True, default=False)
     isActive = models.BooleanField(null=True, blank=True, default=True)
 
 
@@ -45,7 +41,6 @@ class CoverLetter(models.Model):
     userId = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='User_CoverLetter')
     Letter_document = models.FileField(upload_to='CL_Documents/', null=True, blank=True)
     upload_date = models.DateField(auto_now_add=True, null=True, blank=True)
-    isPrimary = models.BooleanField(null=True, blank=True, default=False)
     isActive = models.BooleanField(null=True, blank=True, default=True)
 
 
@@ -73,3 +68,9 @@ class FlashCardInterviewQuestion(models.Model):
 
     def __str__(self):
         return self.question
+
+
+class FreeMockInterview(models.Model):
+    userId = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='FreeMockInterviews')
+    goals = models.ForeignKey(SetGoals, on_delete=models.CASCADE, null=True, blank=True, related_name='mock_interview_goals')
+    InterviewTime = models.DateTimeField(null=True, blank=True)
