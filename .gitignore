@@ -1,5 +1,5 @@
 ../../cowinai-backend/venv
-.venv
+.env
 
 .idea
 .vscode
