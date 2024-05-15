@@ -1,10 +1,8 @@
-../../cowinai-backend/venv
+./env
 .env
 
-.idea
+
 .vscode
 
 __pycache__
 
-garbage
-CoWin Version-1.postman_collection.json
