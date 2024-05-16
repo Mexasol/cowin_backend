@@ -112,27 +112,7 @@ WSGI_APPLICATION = 'CoWin.wsgi.application'
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'postgres',
-#         'USER': 'postgres.mbhzaqroulzgunkluiyg',
-#         'PASSWORD': 'NhQX5s1usx5yooFG',
-#         'HOST': 'aws-0-ap-south-1.pooler.supabase.com',
-#         'PORT': '5432',
-#     }
-# }
-# user=postgres.mbhzaqroulzgunkluiyg password=[YOUR-PASSWORD] host=aws-0-ap-south-1.pooler.supabase.com port=5432 dbname=postgres
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Cowinai_db',
-        'USER': 'Cowinai',
-        'PASSWORD': 'Cowinai17123',
-        'HOST': 'database-cowinai.ch86aum4a1k6.ap-south-1.rds.amazonaws.com',
-        'PORT': '5432',
-    }
-}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
