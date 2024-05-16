@@ -35,102 +35,102 @@ urlpatterns = [
 
                   # ---------------- SET GOALS SECTION ------------------
 
-                  path("subdomain1/set-goals/", views.set_goals, name="set_goals"),
-                  path("subdomain1/edit-goals/", views.edit_goals, name="edit_goals"),
-                  path("subdomain1/get-all-goals/", views.get_all_goals, name="get_all_goals"),
-                  path("subdomain1/inactive-goals/", views.get_archived_goals, name="inactive_goals"),
-                  path("subdomain1/active-goals/", views.get_unarchived_goals, name="active_goals"),
-                  path("subdomain1/goals-status-change/", views.update_goal_status,
+                  path("api/set-goals/", views.set_goals, name="set_goals"),
+                  path("api/edit-goals/", views.edit_goals, name="edit_goals"),
+                  path("api/get-all-goals/", views.get_all_goals, name="get_all_goals"),
+                  path("api/inactive-goals/", views.get_archived_goals, name="inactive_goals"),
+                  path("api/active-goals/", views.get_unarchived_goals, name="active_goals"),
+                  path("api/goals-status-change/", views.update_goal_status,
                        name="goals_status_inactive"),
-                  path("subdomain1/delete-goals/", views.delete_goal, name="delete_goal"),
+                  path("api/delete-goals/", views.delete_goal, name="delete_goal"),
 
                   # ---------------- RESUME SECTION ------------------
 
-                  path("subdomain1/upload-resume/", views.UploadResume, name="upload_resume"),
-                  path("subdomain1/update/resume/", views.UpdateResume, name="update_resume"),
-                  path("subdomain1/get-all-resume/", views.GetAllResume, name="get_all_resume"),
-                  path('subdomain1/download-resume/', views.download_resume, name='download_resume'),
-                  path("subdomain1/delete-resume/", views.DeleteResume, name="delete_resume"),
+                  path("api/upload-resume/", views.UploadResume, name="upload_resume"),
+                  path("api/update/resume/", views.UpdateResume, name="update_resume"),
+                  path("api/get-all-resume/", views.GetAllResume, name="get_all_resume"),
+                  path('api/download-resume/', views.download_resume, name='download_resume'),
+                  path("api/delete-resume/", views.DeleteResume, name="delete_resume"),
 
                   # ---------------- COVER LETTER SECTION ------------------
 
-                  path("subdomain1/upload-coverletter/", views.UploadCoverLetter, name="upload_cover_letter"),
-                  path("subdomain1/update/coverletter/", views.UpdateCoverLetter,
+                  path("api/upload-coverletter/", views.UploadCoverLetter, name="upload_cover_letter"),
+                  path("api/update/coverletter/", views.UpdateCoverLetter,
                        name="update_cover_letter"),
-                  path('subdomain1/download-cover-letter/', views.download_cover_letter,
+                  path('api/download-cover-letter/', views.download_cover_letter,
                        name='download_cover_letter'),
-                  path("subdomain1/get-all-coverletter/", views.GetAllCoverLetter, name="get_all_cover_letter"),
-                  path("subdomain1/delete-coverletter/", views.DeleteCoverLetter, name="delete_cover_letter"),
+                  path("api/get-all-coverletter/", views.GetAllCoverLetter, name="get_all_cover_letter"),
+                  path("api/delete-coverletter/", views.DeleteCoverLetter, name="delete_cover_letter"),
 
                   # ----------------- Flash Card SECTION ------------------
-                  path("subdomain1/flashcard/", views.FlashCardQA, name="flashcard"),
+                  path("api/flashcard/", views.FlashCardQA, name="flashcard"),
 
                   # ----------------- Lookup SECTION ------------------
-                  path('subdomain1/get-userset-goals-lookup/', views.GetUserSetGoalsLookup,
+                  path('api/get-userset-goals-lookup/', views.GetUserSetGoalsLookup,
                        name="GetUserSetGoalsLookup"),
-                  path('subdomain1/resume-lookup/', views.GetUserResumeLookup,
+                  path('api/resume-lookup/', views.GetUserResumeLookup,
                        name="GetUserResumeLookup"),
-                  path('subdomain1/cover-letter-lookup/', views.GetUserCoverLetterLookup,
+                  path('api/cover-letter-lookup/', views.GetUserCoverLetterLookup,
                        name="GetUserCoverLetterLookup"),
-                  path('subdomain1/position-lookup/', views.GetUserPositionLookup,
+                  path('api/position-lookup/', views.GetUserPositionLookup,
                        name="GetUserPositionLookup"),
-                  path('subdomain1/language-lookup/', views.GetUserLanguageLookup,
+                  path('api/language-lookup/', views.GetUserLanguageLookup,
                        name="GetUserCoverLetterLookup"),
 
                   # ----------------- Free Mock Interview SECTION ------------------
-                  path('subdomain1/free-mock-creation/', views.FreeMockCreation, name="FreeMockCreation"),
-                  path('subdomain1/free-mock-creation-complete/', views.FreeMockCompletion,
+                  path('api/free-mock-creation/', views.FreeMockCreation, name="FreeMockCreation"),
+                  path('api/free-mock-creation-complete/', views.FreeMockCompletion,
                        name="FreeMockCompletion"),
-                  path('subdomain1/free-mock-get/', views.FreeMockGetDetails, name="FreeMockGet"),
+                  path('api/free-mock-get/', views.FreeMockGetDetails, name="FreeMockGet"),
 
                   # ----------------- ProLauncher SECTION ------------------
-                  path("subdomain1/pro-luancher-create/", views.ProPilotLauncherCreation, name="proluancher_creattion"),
-                  path("subdomain1/Pro-luancher-data/", views.ProPilotLauncherViewGet, name="proluancher_get_data"),
+                  path("api/pro-luancher-create/", views.ProPilotLauncherCreation, name="proluancher_creattion"),
+                  path("api/Pro-luancher-data/", views.ProPilotLauncherViewGet, name="proluancher_get_data"),
 
                   # ----------------- AI Interview SECTION ------------------
-                  path('subdomain1/ai-Interview-creation/', views.AiInterviewCreation, name="AiInterviewCreation"),
-                  path('subdomain1/ai-set-status/', views.Ai_Set_Status,
+                  path('api/ai-Interview-creation/', views.AiInterviewCreation, name="AiInterviewCreation"),
+                  path('api/ai-set-status/', views.Ai_Set_Status,
                        name="SetStatusCompletion"),
-                  path('subdomain1/ai-get-details/', views.AiInterviewGetDetails, name="FreeMockGet"),
+                  path('api/ai-get-details/', views.AiInterviewGetDetails, name="FreeMockGet"),
 
                   # ----------------- ProLauncher SECTION ------------------
-                  path("subdomain1/ai-pro-luancher-create/", views.AiProPilotLauncherCreation,
+                  path("api/ai-pro-luancher-create/", views.AiProPilotLauncherCreation,
                        name="AiProPilotLauncherCreation"),
-                  path("subdomain1/ai-pro-luancher-data/", views.AiProPilotLauncherGet, name="AiProPilotLauncherGet"),
+                  path("api/ai-pro-luancher-data/", views.AiProPilotLauncherGet, name="AiProPilotLauncherGet"),
 
                   # ----------------- Ai Coding Maths SECTION ------------------
-                  path('subdomain1/ai-coding-maths-creation/', views.AiCodingMathsCreation, name="AiCodingMaths"),
-                  path('subdomain1/ai-coding-maths-set-status/', views.AiCodingMaths_Set_Status,
+                  path('api/ai-coding-maths-creation/', views.AiCodingMathsCreation, name="AiCodingMaths"),
+                  path('api/ai-coding-maths-set-status/', views.AiCodingMaths_Set_Status,
                        name="SetStatusCompletion"),
-                  path('subdomain1/ai-coding-maths-get-details/', views.AiCodingMathsGetDetails, name="AiCodingMaths"),
+                  path('api/ai-coding-maths-get-details/', views.AiCodingMathsGetDetails, name="AiCodingMaths"),
 
                   # ----------------- ProLauncher SECTION ------------------
-                  path("subdomain1/aicodingmaths-pro-luancher-create/", views.AiCodingMathsProPilotCreation,
+                  path("api/aicodingmaths-pro-luancher-create/", views.AiCodingMathsProPilotCreation,
                        name="AiCodingMathsProPilotCreation"),
-                  path('subdomain1/ai-coding-maths-pro-luancher-data/', views.AiCodingMathsProPilotGet,
+                  path('api/ai-coding-maths-pro-luancher-data/', views.AiCodingMathsProPilotGet,
                        name="AiCodingMaths"),
 
                   # ----------------- Resume Templates SECTION ------------------
-                  path('subdomain1/resume-template/', views.ResumeTemplates, name="Resume-Template-All"),
-                  path('subdomain1/resume-template-get/', views.SingleResumeTemplates, name="Resume-Template-Single"),
-                  path('subdomain1/resume-template-add/', views.ResumeTemplateAdd, name="Resume-Template-add"),
+                  path('api/resume-template/', views.ResumeTemplates, name="Resume-Template-All"),
+                  path('api/resume-template-get/', views.SingleResumeTemplates, name="Resume-Template-Single"),
+                  path('api/resume-template-add/', views.ResumeTemplateAdd, name="Resume-Template-add"),
 
                   # ----------------- CoverLetter Templates SECTION ------------------
-                  path('subdomain1/cover-letter-template/', views.CoverLetterTemplates,
+                  path('api/cover-letter-template/', views.CoverLetterTemplates,
                        name="Cover-Letter-Template-All"),
-                  path('subdomain1/cover-letter-template-single/', views.SingleCoverletterTemplates,
+                  path('api/cover-letter-template-single/', views.SingleCoverletterTemplates,
                        name="Cover-Letter-Template-Single"),
-                  path('subdomain1/cover-letter-template-add/', views.CoverLetterTemplateAdd,
+                  path('api/cover-letter-template-add/', views.CoverLetterTemplateAdd,
                        name="Cover-Letter-Template-Add"),
 
                   # ----------------- OCR  SECTION ------------------
-                  path('subdomain1/perform-ocr/', views.Perform_OCR_Api, name='perform_ocr_image_to_text'),
-                  path('subdomain1/user-detail/', views.UserData, name="UserDetails"),
-                  path('subdomain1/delete-user-details/', views.DeleteUserDetails, name="Delete"),
+                  path('api/perform-ocr/', views.Perform_OCR_Api, name='perform_ocr_image_to_text'),
+                  path('api/user-detail/', views.UserData, name="UserDetails"),
+                  path('api/delete-user-details/', views.DeleteUserDetails, name="Delete"),
 
                   # ----------------- Settings SECTION ------------------
-                  path('subdomain1/set-temp/', views.TemperatureView, name="TemeratureView"),
-                  path('subdomain1/temp/', views.TemeratureChoiceView, name="TemperatureChoices"),
+                  path('api/set-temp/', views.TemperatureView, name="TemeratureView"),
+                  path('api/temp/', views.TemeratureChoiceView, name="TemperatureChoices"),
 
                   # ----------------- greeting SECTION ------------------
                   path('api/greeting/', views.get_greeting, name='greeting'),
@@ -147,6 +147,9 @@ urlpatterns = [
                   path('api/pro-pilot-settings/', views.pro_pilot_settings_list, name="pro_pilot_settings"),
                   path('api/pro-pilot-settings/<int:pk>/', views.pro_pilot_settings_detail, name="pro_pilot_settings"),
 
+                  # ----------------- Referral ------------------
+                  path('referral/', views.verify_referral, name='verify_referral'),
+                  path('generate-referral-link/', views.generate_referral_link, name='generate_referral_link'),
 
 
 

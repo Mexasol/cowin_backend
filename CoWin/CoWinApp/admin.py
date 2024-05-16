@@ -4,7 +4,7 @@ from django.contrib.admin import ModelAdmin
 from .models import SetGoals, Users, ResumeCV, CoverLetter, AICategory, AISubcategory, FlashCardInterviewQuestion, \
     FreeMockInterview, ProPilotLauncher, AiInterviewProPilot, AiProPilotLauncher, AiCodingMaths, \
     AiCodingMathsProPilotLauncher, CoverLetterTemplate, ResumeTemplate, Temperature, UserDetails, Models, ModelChoice, \
-    TemperatureChoices, Images, MaxToken, GreetingMessage,ProgrammingLanguage,DeepgramLanguage, ProPilotSettings
+    TemperatureChoices, Images, MaxToken, GreetingMessage,ProgrammingLanguage,DeepgramLanguage, ProPilotSettings,propilottemp,Referral
 
 admin.site.site_header = 'Cowin Admin'
 
@@ -155,9 +155,20 @@ class ProgrammingLanguageAdmin(admin.ModelAdmin):
 
 @admin.register(DeepgramLanguage)
 class DeepgramLanguageAdmin(admin.ModelAdmin):
-    list_display = ('language',)
+    list_display = ('id','language','models_names')
     search_fields = ('language',)
     list_filter = ('language',)
+
+##############################################################################
+############### Propilot Temperatures and Verbosity  #########################
+##############################################################################
+
+@admin.register(propilottemp)
+class ProPilotTempandverbosityAdmin(admin.ModelAdmin):
+    list_display = ('id', 'temp', 'verbosity')
+    search_fields = ('temp',)
+    list_filter = ('temp',)
+
 
 ##############################################################################
 ############################## Pro Pilot Settings  ###########################
@@ -168,3 +179,13 @@ class ProPilotSettingsAdmin(admin.ModelAdmin):
     list_display = ('user','verbosity', 'deepgram_language', 'programming_language', 'tran_delay', 'propilot_temp')
     search_fields = ('user',)
     list_filter = ('user',)
+
+##############################################################################
+############################## Referral code  ################################
+##############################################################################
+
+@admin.register(Referral)
+class ReferralAdmin(admin.ModelAdmin):
+    list_display = ('id','code', 'user', 'created_at')
+    search_fields = ('code', 'user')
+    list_filter = ('code', 'user')

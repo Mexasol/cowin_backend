@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .models import SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion, FreeMockInterview, ProPilotLauncher, \
     AiInterviewProPilot, AiProPilotLauncher, AiCodingMaths, \
     AiCodingMathsProPilotLauncher, ResumeTemplate, CoverLetterTemplate, Temperature, Models, TemperatureChoices, Users, \
-    UserDetails,ProgrammingLanguage,DeepgramLanguage, ProPilotSettings
+    UserDetails,ProgrammingLanguage,DeepgramLanguage, ProPilotSettings,propilottemp,Referral
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -373,7 +373,15 @@ class ProgrammingLanguageSerializer(serializers.ModelSerializer):
 class DeepgramlanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeepgramLanguage
-        fields = ['id', 'language']
+        fields = '__all__'
+
+##############################################################################
+############### Propilot Temperatures and Verbosity  #########################
+##############################################################################
+class ProPilotTempandverbositySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = propilottemp
+        fields = '__all__'
 
 
 ##############################################################################
@@ -382,5 +390,13 @@ class DeepgramlanguageSerializer(serializers.ModelSerializer):
 class ProPilotSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProPilotSettings
+        fields = '__all__'
+
+##############################################################################
+############################## Referral code  ################################
+##############################################################################
+class ReferralSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Referral
         fields = '__all__'
         

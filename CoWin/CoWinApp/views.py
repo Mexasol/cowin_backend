@@ -1,50 +1,68 @@
 import os
+import uuid
 import random
-from datetime import timedelta,datetime
-
+import string
+from datetime import timedelta, datetime
 
 from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import (
+    api_view, permission_classes, authentication_classes
+)
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
-from django.core.exceptions import ObjectDoesNotExist
-from random import choice
-from .models import Users, SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion, FreeMockInterview, \
-    ProPilotLauncher, AiInterviewProPilot, AiProPilotLauncher, AiCodingMaths, AiCodingMathsProPilotLauncher, \
-    ResumeTemplate, CoverLetterTemplate, Temperature, UserDetails, TemperatureChoices, Models, Images, MaxToken, \
-    GreetingMessage,  ProgrammingLanguage, DeepgramLanguage, ProPilotSettings
-from .serializers import UserSerializer, SetGoalsSerializer, ResumeCVSerializer, \
-    CoverLetterSerializer, FlashCardInterviewQuestionsSerializer, ForgetPasswordSerializer, ResetPasswordSerializer, \
-    SetGoalsLookups, FreeMockCreationSerializers, \
-    FreeMockGetSerializers, ResumeCvLookupsSerializer, CoverLetterLookupsSerializer, PositionLookupsSerializer, \
-    ProPilotLauncherSerializers, AiInterviewCreationSerializers, AiInterviewGetSerializers, \
-    AiProPilotLauncherSerializers, AiCodingMathsCreationSerializers, AiCodingMathsGetSerializers, \
-    AiCodingMathsProPilotSerializers, LanguageLookupsSerializer, AiCodingProPilotSerializers, CvSerializer, \
-    CLSerializer, TemperatureSerializers, TemperatureChoicesSerializers, UsersSerializer, UserDetailsSerializer, \
-    ProgrammingLanguageSerializer, DeepgramlanguageSerializer, ProPilotSettingsSerializer
-from .utils import send_mail_using_smtp, perform_ocr, perform_ocr_recognition, perform_ocr_detection, decode_image
+
+from .models import (
+    Users, SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion,
+    FreeMockInterview, ProPilotLauncher, AiInterviewProPilot,
+    AiProPilotLauncher, AiCodingMaths, AiCodingMathsProPilotLauncher,
+    ResumeTemplate, CoverLetterTemplate, Temperature, UserDetails,
+    TemperatureChoices, Models, Images, MaxToken, GreetingMessage,
+    ProgrammingLanguage, DeepgramLanguage, ProPilotSettings, propilottemp,
+    Referral
+)
+
+from .serializers import (
+    UserSerializer, SetGoalsSerializer, ResumeCVSerializer,
+    CoverLetterSerializer, FlashCardInterviewQuestionsSerializer,
+    ForgetPasswordSerializer, ResetPasswordSerializer, SetGoalsLookups,
+    FreeMockCreationSerializers, FreeMockGetSerializers,
+    ResumeCvLookupsSerializer, CoverLetterLookupsSerializer,
+    PositionLookupsSerializer, ProPilotLauncherSerializers,
+    AiInterviewCreationSerializers, AiInterviewGetSerializers,
+    AiProPilotLauncherSerializers, AiCodingMathsCreationSerializers,
+    AiCodingMathsGetSerializers, AiCodingMathsProPilotSerializers,
+    LanguageLookupsSerializer, AiCodingProPilotSerializers,
+    CvSerializer, CLSerializer, TemperatureSerializers,
+    TemperatureChoicesSerializers, UsersSerializer, UserDetailsSerializer,
+    ProgrammingLanguageSerializer, DeepgramlanguageSerializer,
+    ProPilotSettingsSerializer, ProPilotTempandverbositySerializer
+)
+
+from .utils import (
+    send_mail_using_smtp, perform_ocr, perform_ocr_recognition,
+    perform_ocr_detection, decode_image
+)
+
 
 """
 -----------------------------------------------------
 ------------- AUTHENTICATIONS SECTION ---------------
 -----------------------------------------------------
 """
-
-
-@sync_to_async
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
@@ -56,39 +74,30 @@ def postauthuser(request):
         password = request.data.get('password')
         is_superuser = request.data.get('is_superuser')
         is_superuser = is_superuser if is_superuser is not None else False
-
         profile_value = request.data.get('profile')
+        referral_code = request.GET.get('ref')
 
-        # Check if the user with the provided email already exists
+        # Check if the user already exists
         user = User.objects.filter(email=email).first()
-        print(user)
-        user_id = user.id
-        print(user_id)
 
         if user:
-            # User already exists
+            # User already exists, return tokens and user data
             user_instance = Users.objects.get(userId=user.id)
 
-            # Set the 'profile' value only if provided in the request
             if profile_value is not None:
                 user_instance.profile = profile_value
                 user_instance.save()
-            refresh = RefreshToken.for_user(user)
 
+            refresh = RefreshToken.for_user(user)
             data = {
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
                 'user': UserSerializer(user).data,
                 'profile': profile_value,
             }
-
             return Response(data, status=status.HTTP_200_OK)
-                
-            # return Response({'error': f'User with this email already exist.'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
         else:
+            # User doesn't exist, create a new user
             user_data = {
                 'username': email,
                 'email': email,
@@ -100,23 +109,31 @@ def postauthuser(request):
             serializer = UserSerializer(data=user_data)
 
             if serializer.is_valid():
-                user = serializer.create(serializer.validated_data)
+                user = serializer.save()
                 Users.objects.get_or_create(userId=user)
-                user_id = user.id
 
-                # Set the 'profile' value only if provided in the request
+                # Update user profile if provided
                 if profile_value is not None:
-                    user_instance = Users.objects.get(userId=user_id)
+                    user_instance = Users.objects.get(userId=user.id)
                     user_instance.profile = profile_value
                     user_instance.save()
 
-                # Get tokens for new user
-                # data = get_tokens_for_user(user, user_id, profile_value)
+                # Check and associate referral if referral_code is provided
+                if referral_code:
+                    try:
+                        referral = Referral.objects.get(code=referral_code)
+                        referral.users_referred.add(user)
+                    except Referral.DoesNotExist:
+                        # Referral code not found
+                        return Response({"response": f"Referral code not found: {referral_code}"}, status=status.HTTP_400_BAD_REQUEST)
 
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                # Return successful response with user data
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
+                # Invalid serializer data
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        # Handle other exceptions
         return Response({"response": f"Something went wrong: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -1527,7 +1544,9 @@ def UserData(request):
     except Exception as e:
         return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+##############################################################################
+############################## Greeting Message  #############################
+##############################################################################
 
 
 @api_view(['GET'])
@@ -1536,7 +1555,7 @@ def get_greeting(request):
     greeting = determine_greeting(current_time)
 
     try:
-        random_message = choice(GreetingMessage.objects.all())
+        random_message = random.choice(GreetingMessage.objects.all())
         return Response({
             "greeting": greeting,
             "message_from_db": random_message.message  # Directly access the 'message' field
@@ -1544,9 +1563,6 @@ def get_greeting(request):
     except IndexError:
         return Response({"error": "No greeting message found."}, status=status.HTTP_404_NOT_FOUND)
     
-##############################################################################
-############################## Greeting Message  #############################
-##############################################################################
 
 def determine_greeting(current_time):
     if current_time < datetime.strptime('12:00:00', '%H:%M:%S').time():
@@ -1558,8 +1574,9 @@ def determine_greeting(current_time):
     
 
 ##############################################################################
-############################## programming Language  #########################
+############################## Programming Language  #########################
 ##############################################################################
+
 @permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST'])
 def language_list(request):
@@ -1636,6 +1653,24 @@ def deepgram_language_detail(request, pk):
     elif request.method == 'DELETE':
         language.delete()
         return Response(status=204)
+    
+##############################################################################
+############### Propilot Temperatures and Verbosity  #########################
+##############################################################################
+
+@api_view(['GET', 'POST'])
+def pro_pilot_temperatures_list(request):
+    if request.method == 'GET':
+        temperatures = propilottemp.objects.all()
+        serializer = ProPilotTempandverbositySerializer(temperatures, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = ProPilotTempandverbositySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
     
 ##############################################################################
 ############################## Pro Pilot Settings  ###########################
@@ -1722,4 +1757,46 @@ def pro_pilot_settings_detail(request, pk):
 
     except ObjectDoesNotExist:
         return Response({"error": "ProPilotSettings not found or does not exist for the user"}, status=status.HTTP_404_NOT_FOUND)
+    
 
+##############################################################################
+############################## Referral code  ################################
+##############################################################################
+def generate_referral_code():
+    uuid_str = str(uuid.uuid4()).replace('-', '')
+    # Filter out non-digit characters
+    digits_only = ''.join(filter(str.isdigit, uuid_str))
+     # Ensure the referral code is exactly 8 digits long
+    referral_code = digits_only[:8].zfill(8)  # Pad with leading zeros if necessary
+    return referral_code
+
+@api_view(['GET'])
+def verify_referral(request):
+    # Get the referral code from the query parameters
+    referral_code = request.query_params.get('ref')
+
+    if not referral_code:
+        return Response({'valid': False, 'error': 'Referral code is missing'})
+    # Look up the Referral object by the provided code
+    referral = get_object_or_404(Referral, code=referral_code)
+    # If referral is found, generate tokens for the referred user
+    user = referral.user
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+    # Return response with valid status, user's username, and access token
+    return Response({'valid': True, 'user': user.username})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Ensure endpoint requires authentication
+def generate_referral_link(request):
+    user = request.user
+
+    referral_code = generate_referral_code()
+    Referral.objects.create(code=referral_code, user=user)
+    
+    # Generate tokens for the user
+    refresh = RefreshToken.for_user(user)
+    access = str(refresh.access_token)
+
+    referral_link = f'http://127.0.0.1:8000/auth/signup/?ref={referral_code}'
+    return Response({'referral_link': referral_link, 'access_token': access})

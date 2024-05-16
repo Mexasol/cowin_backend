@@ -3,8 +3,7 @@ from datetime import timedelta
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
-import random
-import string
+
 
 class Users(models.Model):
     userId = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='Users')
@@ -217,10 +216,20 @@ class ProgrammingLanguage(models.Model):
 
 class DeepgramLanguage(models.Model):
     language = models.CharField(max_length=255)
+    models_names = models.TextField(null=True, blank=True)
 
 
     def __str__(self):
         return self.language
+    
+
+##############################################################################
+############### Propilot Temperatures and Verbosity  #########################
+##############################################################################
+
+class propilottemp(models.Model):
+    temp = models.CharField(max_length=255)
+    verbosity = models.CharField(max_length=255,null=True, blank=True)
 
 
 ##############################################################################
@@ -236,4 +245,13 @@ class ProPilotSettings(models.Model):
     propilot_temp = models.TextField(null=True, blank=True)
     def __str__(self):
         return f"ProPilot Settings for {self.user.username}"
+
+##############################################################################
+############################## Referral code  ################################
+##############################################################################
+class Referral(models.Model):
+    code = models.CharField(max_length=8, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='referrals')
+    users_referred = models.ManyToManyField(User, related_name='referred_by')
+    created_at = models.DateTimeField(auto_now_add=True)
 
