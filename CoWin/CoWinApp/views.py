@@ -1842,11 +1842,15 @@ def propilot_settings(request):
         data['position'] = set_goals.position  # Set the position
         data['company'] = set_goals.company_name  # Set the company name
 
+        # Add is_completed parameter
+        data['is_completed'] = request.data.get('is_completed', settings.is_completed)
+
         serializer = PropilotSettingsLauncherSerializers(settings, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()  # Save the updates
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     
     elif request.method == 'DELETE':
