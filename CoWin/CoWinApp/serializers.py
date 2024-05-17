@@ -1,12 +1,25 @@
+# Django imports
 from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_decode
+
+# Third-party imports
 from rest_framework import serializers
 
-from .models import SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion, FreeMockInterview, ProPilotLauncher, \
-    AiInterviewProPilot, AiProPilotLauncher, AiCodingMaths, \
-    AiCodingMathsProPilotLauncher, ResumeTemplate, CoverLetterTemplate, Temperature, Models, TemperatureChoices, Users, \
-    UserDetails,ProgrammingLanguage,DeepgramLanguage, ProPilotSettings,propilottemp,Referral
+# Local imports
+from .models import (
+    SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion,
+    FreeMockInterview, ProPilotLauncher, AiInterviewProPilot,SettingsLauncherpropilot,
+    AiProPilotLauncher, AiCodingMaths, AiCodingMathsProPilotLauncher,
+    ResumeTemplate, CoverLetterTemplate,
+    Users, UserDetails, ProgrammingLanguage,
+    DeepgramLanguage, ProPilotSettings, propilottemp, Referral,
+    BannerText
+)
 
+
+##############################################################################
+############################## User Serializer ################################
+##############################################################################
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -29,9 +42,11 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create(**validated_data)
         user.set_password(validated_data['password'])
         user.save()
-
         return user
 
+##############################################################################
+############################## Users Serializer ##############################
+##############################################################################
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,16 +59,9 @@ class UsersSerializer(serializers.ModelSerializer):
         representation['email'] = UserSerializer(instance.userId).data['email'] if instance.userId else None
         return representation
 
-
-# def get_tokens_for_user(user_id, user, profile):
-#     refresh = RefreshToken.for_user(user_id)
-#
-#     return {
-#         'refresh': str(refresh),
-#         'access': str(refresh.access_token),
-#         'user': user,
-#         'profile': profile,
-#     }
+##############################################################################
+############################## Forget Password Serializer ####################
+##############################################################################
 
 class ForgetPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -61,6 +69,9 @@ class ForgetPasswordSerializer(serializers.Serializer):
     class Meta:
         fields = ("email",)
 
+##############################################################################
+############################## Reset Password Serializer #####################
+##############################################################################
 
 class ResetPasswordSerializer(serializers.Serializer):
     key = serializers.CharField()
@@ -76,7 +87,6 @@ class ResetPasswordSerializer(serializers.Serializer):
         write_only_fields = ("key", "new_password", "confirm_password")
 
     def validate(self, data):
-        print(data)
         encoded_user = data.get("key")
         new_password = data.get("new_password")
         confirm_password = data.get("confirm_password")
@@ -93,6 +103,9 @@ class ResetPasswordSerializer(serializers.Serializer):
         user.save()
         return data
 
+##############################################################################
+############################## Set Goals Serializer ##########################
+##############################################################################
 
 class SetGoalsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -107,6 +120,9 @@ class SetGoalsSerializer(serializers.ModelSerializer):
             'isActive'
         ]
 
+##############################################################################
+############################## Resume CV Serializer ##########################
+##############################################################################
 
 class ResumeCVSerializer(serializers.ModelSerializer):
     class Meta:
@@ -131,6 +147,9 @@ class ResumeCVSerializer(serializers.ModelSerializer):
         data['cv_name'] = self.get_cv_name(instance)
         return data
 
+##############################################################################
+############################## Cover Letter Serializer #######################
+##############################################################################
 
 class CoverLetterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -152,7 +171,6 @@ class CoverLetterSerializer(serializers.ModelSerializer):
         data['cl_name'] = self.get_cl_name(instance)
         return data
 
-
 class CvSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResumeTemplate
@@ -164,7 +182,9 @@ class CLSerializer(serializers.ModelSerializer):
         model = CoverLetterTemplate
         fields = '__all__'
 
-
+##############################################################################
+############################## Flash Card Serializer #########################
+##############################################################################
 class FlashCardInterviewQuestionsSerializer(serializers.ModelSerializer):
     category_name = serializers.SerializerMethodField()
     subcategory_name = serializers.SerializerMethodField()
@@ -186,17 +206,7 @@ class FlashCardInterviewQuestionsSerializer(serializers.ModelSerializer):
         return obj.subcategory.name if obj.subcategory else None
 
 
-# class FreeMockInterviewSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = FreeMockInterview
-#         fields = '__all__'
-#
-#     def to_representation(self, instance):
-#         representation = super().to_representation(instance)
-#         representation.pop('goals')
-#         representation['position'] = SetGoalsSerializer(instance.goals).data['position'] if instance.goals else None
-#         representation['company'] = SetGoalsSerializer(instance.goals).data['company_name'] if instance.goals else None
-#         return representation
+
 
 class SetGoalsLookups(serializers.ModelSerializer):
     class Meta:
@@ -260,12 +270,6 @@ class PositionLookupsSerializer(serializers.ModelSerializer):
         fields = ['id', 'position']
 
 
-class LanguageLookupsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SetGoals
-        fields = ['id', 'programing_language']
-
-
 class ProPilotLauncherSerializers(serializers.ModelSerializer):
     class Meta:
         model = ProPilotLauncher
@@ -279,17 +283,19 @@ class AiInterviewCreationSerializers(serializers.ModelSerializer):
         read_only_fields = ['isActive']
 
 
-class AiInterviewGetSerializers(serializers.ModelSerializer):
+class PropilotSettingsLauncherSerializers(serializers.ModelSerializer):
     class Meta:
-        model = AiInterviewProPilot
+        model = SettingsLauncherpropilot
         fields = '__all__'
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation.pop('goals')
-        representation['position'] = SetGoalsSerializer(instance.goals).data['position'] if instance.goals else None
-        representation['company'] = SetGoalsSerializer(instance.goals).data['company_name'] if instance.goals else None
-        return representation
+
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     goals_data = SetGoalsSerializer(instance.goals).data if instance.goals else {}
+    #     representation['position'] = goals_data.get('position')
+    #     representation['company'] = goals_data.get('company_name')
+    #     return representation
+
 
 
 class AiProPilotLauncherSerializers(serializers.ModelSerializer):
@@ -333,23 +339,6 @@ class AiCodingProPilotSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TemperatureSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Temperature
-        fields = '__all__'
-        read_only_fields = ['created_at']
-
-
-class ModelsSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Models
-        fields = '__all__'
-
-
-class TemperatureChoicesSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = TemperatureChoices
-        fields = '__all__'
 
 
 class UserDetailsSerializer(serializers.ModelSerializer):
@@ -362,14 +351,18 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         representation['user'] = UserSerializer(instance.user).data['username'] if instance.user else None
         return representation
 
-
+##############################################################################
+############################## Programming language ##########################
+##############################################################################
 
 class ProgrammingLanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProgrammingLanguage
         fields = ['id', 'language']
 
-        
+##############################################################################
+############################## Deepgram language #############################
+##############################################################################      
 class DeepgramlanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeepgramLanguage
@@ -399,4 +392,13 @@ class ReferralSerializer(serializers.ModelSerializer):
     class Meta:
         model = Referral
         fields = '__all__'
-        
+
+##############################################################################
+############################## Banner Text  ##################################
+##############################################################################
+
+class BannerTextSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BannerText
+        fields = '__all__'
+

@@ -1,9 +1,11 @@
+# Standard library imports
 import os
 import uuid
 import random
 import string
 from datetime import timedelta, datetime
 
+# Third-party imports
 from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.contrib.auth import authenticate
@@ -25,14 +27,14 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
+# Local imports
 from .models import (
     Users, SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion,
     FreeMockInterview, ProPilotLauncher, AiInterviewProPilot,
     AiProPilotLauncher, AiCodingMaths, AiCodingMathsProPilotLauncher,
-    ResumeTemplate, CoverLetterTemplate, Temperature, UserDetails,
-    TemperatureChoices, Models, Images, MaxToken, GreetingMessage,
+    ResumeTemplate, CoverLetterTemplate, UserDetails, Images, GreetingMessage,
     ProgrammingLanguage, DeepgramLanguage, ProPilotSettings, propilottemp,
-    Referral
+    Referral, BannerText,SettingsLauncherpropilot
 )
 
 from .serializers import (
@@ -42,20 +44,21 @@ from .serializers import (
     FreeMockCreationSerializers, FreeMockGetSerializers,
     ResumeCvLookupsSerializer, CoverLetterLookupsSerializer,
     PositionLookupsSerializer, ProPilotLauncherSerializers,
-    AiInterviewCreationSerializers, AiInterviewGetSerializers,
+    AiInterviewCreationSerializers,
     AiProPilotLauncherSerializers, AiCodingMathsCreationSerializers,
     AiCodingMathsGetSerializers, AiCodingMathsProPilotSerializers,
-    LanguageLookupsSerializer, AiCodingProPilotSerializers,
-    CvSerializer, CLSerializer, TemperatureSerializers,
-    TemperatureChoicesSerializers, UsersSerializer, UserDetailsSerializer,
+    AiCodingProPilotSerializers,CvSerializer, CLSerializer,
+    UsersSerializer, UserDetailsSerializer,
     ProgrammingLanguageSerializer, DeepgramlanguageSerializer,
-    ProPilotSettingsSerializer, ProPilotTempandverbositySerializer
+    ProPilotSettingsSerializer, ProPilotTempandverbositySerializer,
+    BannerTextSerializer,PropilotSettingsLauncherSerializers
 )
 
 from .utils import (
     send_mail_using_smtp, perform_ocr, perform_ocr_recognition,
     perform_ocr_detection, decode_image
 )
+
 
 
 """
@@ -1093,20 +1096,6 @@ def GetUserPositionLookup(request):
         return Response("Invalid request method", status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def GetUserLanguageLookup(request):
-    try:
-        user = request.user
-        language = SetGoals.objects.filter(userId=user)
-    except SetGoals.DoesNotExist:
-        return Response("SetGoals is not exist", status=status)
-    if request.method == 'GET':
-        serializer = LanguageLookupsSerializer(language, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    else:
-        return Response("Invalid request method", status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -1198,18 +1187,16 @@ def AiInterviewGetDetails(request):
         if IsActive:
             user_set_ai = AiInterviewProPilot.objects.filter(userId=user, IsActive=IsActive)
 
-        serializer = AiInterviewGetSerializers(user_set_ai, many=True)
+        serializer = PropilotSettingsLauncherSerializers(user_set_ai, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response("Invalid request", status=status.HTTP_400_BAD_REQUEST)
 
 
-"""
------------------------------------------------------
-------------- AI ProPilotLauncher SECTION ---------------
------------------------------------------------------
-"""
 
+##############################################################################
+############################## AiProPilotLauncher Important  #################
+##############################################################################
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -1246,6 +1233,10 @@ def AiProPilotLauncherGet(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response("Invalid request", status=status.HTTP_400_BAD_REQUEST)
+    
+##############################################################################
+########################## End AiProPilotLauncher Important  #################
+##############################################################################
 
 
 """
@@ -1311,45 +1302,31 @@ def AiCodingMathsGetDetails(request):
 """
 
 
-@api_view(['POST'])
-def AiCodingMathsProPilotCreation(request):
-    if request.method == 'POST':
-        serializer = AiCodingMathsProPilotSerializers(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "AiCodingMaths Pro Pilot Launcher created successfully"},
-                            status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response("Invalid request", status=status.HTTP_405_METHOD_NOT_ALLOWED)
+# @api_view(['POST'])
+# def AiCodingMathsProPilotCreation(request):
+#     if request.method == 'POST':
+#         serializer = AiCodingMathsProPilotSerializers(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response({"message": "AiCodingMaths Pro Pilot Launcher created successfully"},
+#                             status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     else:
+#         return Response("Invalid request", status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def AiCodingMathsProPilotGet(request):
-    if request.method == 'GET':
-        user = request.user
-        pro_pilot_launchers = AiCodingMathsProPilotLauncher.objects.filter(userId=user)
-        serializer = AiCodingProPilotSerializers(pro_pilot_launchers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    else:
-        return Response("Invalid request", status=status.HTTP_405_METHOD_NOT_ALLOWED)
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def AiCodingMathsProPilotGet(request):
+#     if request.method == 'GET':
+#         user = request.user
+#         pro_pilot_launchers = AiCodingMathsProPilotLauncher.objects.filter(userId=user)
+#         serializer = AiCodingProPilotSerializers(pro_pilot_launchers, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#     else:
+#         return Response("Invalid request", status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def TemperatureView(request):
-    if request.method == 'POST':
-        user = request.user
-        mutable_data = request.data.copy()
-        mutable_data['userId'] = user.id
-        serializer = TemperatureSerializers(data=mutable_data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response("Temperature added", status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response({"error": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 """
@@ -1357,20 +1334,6 @@ def TemperatureView(request):
 ------------- OCR SECTION ---------------
 -----------------------------------------------------
 """
-
-
-@api_view(['GET'])
-def TemeratureChoiceView(request):
-    if request.method == 'GET':
-        try:
-            data = TemperatureChoices.objects.all()
-            serializer = TemperatureChoicesSerializers(data, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(f"Choices not found : {e}", status=status.HTTP_404_NOT_FOUND)
-    else:
-        return Response({"error": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
 import base64
 from PIL import Image
@@ -1431,37 +1394,16 @@ def Perform_OCR_Api(request):
             else:
                 return Response({"error": "no goal exist"}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Get the latest temperature object
-            temp = Temperature.objects.filter(userId=user).order_by('-id').first()
-            if temp:
-                temp_value = temp.temperature_choice if temp else None
-            else:
-                return Response({"error": "no temperature exist"}, status=status.HTTP_400_BAD_REQUEST)
-            # Get the latest Model object
-            latest_model = Models.objects.filter(user=user).order_by('-created_at').first()
-            if latest_model:
-                latest_model_value = latest_model.model_name if latest_model else None
-            else:
-                return Response({"error": "no model found"}, status=status.HTTP_404_NOT_FOUND)
-            # Get the latest Token object
-            latest_token = MaxToken.objects.filter(user=user).order_by('-created_at').first()
-            if latest_token:
-                latest_token = latest_token.token if latest_token else None
-            else:
-                return Response({"error": "no token found"}, status=status.HTTP_404_NOT_FOUND)
-
             UserDetails.objects.update_or_create(
                 user=user,
                 defaults={
                     'latest_resume': extracted_resume,
                     'latest_goal': goal_position,
-                    'latest_temperature': temp_value
                 }
             )
-
             # Perform OCR detection
             chatbot_response = perform_ocr_detection(extracted_image, goal_programing_language, goal_position,
-                                                     extracted_resume, temp_value, latest_model_value, latest_token)
+                                                     extracted_resume)
             chatbot = chatbot_response.split('\n')
             chatbot_response = [line.strip() for line in chatbot if line.strip()]
             # user_details = get_object_or_404(UserDetails, user=user)
@@ -1764,39 +1706,162 @@ def pro_pilot_settings_detail(request, pk):
 ##############################################################################
 def generate_referral_code():
     uuid_str = str(uuid.uuid4()).replace('-', '')
-    # Filter out non-digit characters
     digits_only = ''.join(filter(str.isdigit, uuid_str))
-     # Ensure the referral code is exactly 8 digits long
-    referral_code = digits_only[:8].zfill(8)  # Pad with leading zeros if necessary
+    referral_code = digits_only[:8].zfill(8) 
     return referral_code
 
 @api_view(['GET'])
 def verify_referral(request):
-    # Get the referral code from the query parameters
-    referral_code = request.query_params.get('ref')
+    try:
+        referral_code = request.query_params.get('ref')
 
-    if not referral_code:
-        return Response({'valid': False, 'error': 'Referral code is missing'})
-    # Look up the Referral object by the provided code
-    referral = get_object_or_404(Referral, code=referral_code)
-    # If referral is found, generate tokens for the referred user
-    user = referral.user
-    refresh = RefreshToken.for_user(user)
-    access_token = str(refresh.access_token)
-    # Return response with valid status, user's username, and access token
-    return Response({'valid': True, 'user': user.username})
+        if not referral_code:
+            # Return error response if referral code is missing
+            return Response({'valid': False, 'error': 'Referral code is missing'}, status=status.HTTP_400_BAD_REQUEST)
+        referral = get_object_or_404(Referral, code=referral_code)
+        user = referral.user
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        return Response({'valid': True, 'user': user.username}, status=status.HTTP_200_OK)
+
+    except Referral.DoesNotExist:
+        return Response({'valid': False, 'error': 'Invalid referral code'}, status=status.HTTP_404_NOT_FOUND)
+
+    except Exception as e:
+        return Response({'valid': False, 'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])  # Ensure endpoint requires authentication
+@permission_classes([IsAuthenticated])  
 def generate_referral_link(request):
-    user = request.user
+    try:
+        user = request.user
+        # Generate a referral code
+        referral_code = generate_referral_code()
+        Referral.objects.create(code=referral_code, user=user)
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
 
-    referral_code = generate_referral_code()
-    Referral.objects.create(code=referral_code, user=user)
+        referral_link = f'http://13.234.75.26:8000/auth/signup/?ref={referral_code}'
+        # Return response
+        return Response({'referral_link': referral_link}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+##############################################################################
+############################## Banner Text  ##################################
+##############################################################################
+
+@api_view(['GET'])
+def get_banner_text(request):
+    try:
+        banner_text = BannerText.objects.first()
+        if not banner_text:
+            # not found show 404
+            return Response({"error": "Banner text not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = BannerTextSerializer(banner_text)
+        return Response(serializer.data)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+##############################################################################
+############################## Banner Text  ##################################
+##############################################################################
+
+def get_user_from_token(request):
+    try:
+        token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
+        access_token = AccessToken(token)
+        user_id_from_token = access_token['user_id']
+        user = User.objects.get(id=user_id_from_token)
+        return user
+    except (IndexError, KeyError, User.DoesNotExist):
+        return None
+
+@api_view(['GET', 'POST', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def propilot_settings(request):
+    user = get_user_from_token(request)
+    if not user:
+        return Response({"detail": "Invalid token or user not found."}, status=status.HTTP_401_UNAUTHORIZED)
     
-    # Generate tokens for the user
-    refresh = RefreshToken.for_user(user)
-    access = str(refresh.access_token)
+    if request.method == 'GET':
+        settings = SettingsLauncherpropilot.objects.filter(user=user)
+        serializer = PropilotSettingsLauncherSerializers(settings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        user = get_user_from_token(request)
+        if not user:
+            return Response({"detail": "Invalid token or user not found."}, status=status.HTTP_401_UNAUTHORIZED)
 
-    referral_link = f'http://127.0.0.1:8000/auth/signup/?ref={referral_code}'
-    return Response({'referral_link': referral_link, 'access_token': access})
+        data = request.data.copy()  # Make a copy of request data
+        data['user'] = user.id  # Assign the user's ID to the 'user' field
+
+        # Fetch position and company_name from SetGoals for the user
+        set_goals = SetGoals.objects.filter(userId=user).first()
+        if not set_goals:
+            return Response({"detail": "SetGoals not found for the user."}, status=status.HTTP_404_NOT_FOUND)
+
+        data['position'] = set_goals.position  # Set the position
+        data['company'] = set_goals.company_name  # Set the company name
+
+        serializer = PropilotSettingsLauncherSerializers(data=data)
+        if serializer.is_valid():
+            serializer.save()  # Save with the user obtained from the token
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    elif request.method == 'PATCH':
+        user = get_user_from_token(request)
+        if not user:
+            return Response({"detail": "Invalid token or user not found."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        pk = request.data.get('id')
+        if not pk:
+            return Response({"detail": "ID is required for PATCH request."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            settings = SettingsLauncherpropilot.objects.get(pk=pk, user=user)
+        except SettingsLauncherpropilot.DoesNotExist:
+            return Response({"detail": "PropilotSettingsluncher not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        data = request.data.copy()  # Make a copy of request data
+        data.pop('id')  # Remove 'id' field as it's not needed for partial update
+
+        # Fetch position and company_name from SetGoals for the user
+        set_goals = SetGoals.objects.filter(userId=user).first()
+        if not set_goals:
+            return Response({"detail": "SetGoals not found for the user."}, status=status.HTTP_404_NOT_FOUND)
+
+        data['position'] = set_goals.position  # Set the position
+        data['company'] = set_goals.company_name  # Set the company name
+
+        serializer = PropilotSettingsLauncherSerializers(settings, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()  # Save the updates
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+    elif request.method == 'DELETE':
+        pk = request.data.get('id')
+        if not pk:
+            return Response({"detail": "ID is required for DELETE request."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            settings = SettingsLauncherpropilot.objects.get(pk=pk, user=user)
+        except SettingsLauncherpropilot.DoesNotExist:
+            return Response({"detail": "PropilotSettingsluncher not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        settings.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+

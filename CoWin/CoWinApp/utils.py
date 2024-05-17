@@ -97,9 +97,9 @@ def perform_ocr_detection(question, programming_language, user_position, resume_
                 """,
             }
         ],
-        model=f"{latest_model_value}",
-        temperature=temperature,
-        max_tokens=latest_token,
+        model="llama3-70b-8192",
+        temperature=0.5,
+        max_tokens=8000,
         top_p=1,
     )
     response = chat_completion.choices[0].message.content

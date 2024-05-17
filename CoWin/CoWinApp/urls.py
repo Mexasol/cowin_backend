@@ -74,8 +74,7 @@ urlpatterns = [
                        name="GetUserCoverLetterLookup"),
                   path('api/position-lookup/', views.GetUserPositionLookup,
                        name="GetUserPositionLookup"),
-                  path('api/language-lookup/', views.GetUserLanguageLookup,
-                       name="GetUserCoverLetterLookup"),
+                  
 
                   # ----------------- Free Mock Interview SECTION ------------------
                   path('api/free-mock-creation/', views.FreeMockCreation, name="FreeMockCreation"),
@@ -105,10 +104,10 @@ urlpatterns = [
                   path('api/ai-coding-maths-get-details/', views.AiCodingMathsGetDetails, name="AiCodingMaths"),
 
                   # ----------------- ProLauncher SECTION ------------------
-                  path("api/aicodingmaths-pro-luancher-create/", views.AiCodingMathsProPilotCreation,
-                       name="AiCodingMathsProPilotCreation"),
-                  path('api/ai-coding-maths-pro-luancher-data/', views.AiCodingMathsProPilotGet,
-                       name="AiCodingMaths"),
+               #    path("api/aicodingmaths-pro-luancher-create/", views.AiCodingMathsProPilotCreation,
+               #         name="AiCodingMathsProPilotCreation"),
+               #    path('api/ai-coding-maths-pro-luancher-data/', views.AiCodingMathsProPilotGet,
+               #         name="AiCodingMaths"),
 
                   # ----------------- Resume Templates SECTION ------------------
                   path('api/resume-template/', views.ResumeTemplates, name="Resume-Template-All"),
@@ -128,9 +127,6 @@ urlpatterns = [
                   path('api/user-detail/', views.UserData, name="UserDetails"),
                   path('api/delete-user-details/', views.DeleteUserDetails, name="Delete"),
 
-                  # ----------------- Settings SECTION ------------------
-                  path('api/set-temp/', views.TemperatureView, name="TemeratureView"),
-                  path('api/temp/', views.TemeratureChoiceView, name="TemperatureChoices"),
 
                   # ----------------- greeting SECTION ------------------
                   path('api/greeting/', views.get_greeting, name='greeting'),
@@ -148,8 +144,16 @@ urlpatterns = [
                   path('api/pro-pilot-settings/<int:pk>/', views.pro_pilot_settings_detail, name="pro_pilot_settings"),
 
                   # ----------------- Referral ------------------
-                  path('referral/', views.verify_referral, name='verify_referral'),
-                  path('generate-referral-link/', views.generate_referral_link, name='generate_referral_link'),
+                  path('api/referral/', views.verify_referral, name='verify_referral'),
+                  path('api/generate-referral-link/', views.generate_referral_link, name='generate_referral_link'),
+
+                  # ----------------- banner text ------------------
+                  path('api/home-banner-text/', views.get_banner_text, name='get_banner_text'),
+
+                  # ----------------- propilot-settings ------------------
+                  path('api/propilot-settings/', views.propilot_settings, name='propilot-settings'),
+                  path('api/pro-pilot-temperatures-list/', views.pro_pilot_temperatures_list, name='pro_pilot_temperatures_list'),
+
 
 
 

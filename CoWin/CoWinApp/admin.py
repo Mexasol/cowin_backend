@@ -1,25 +1,47 @@
+##############################################################################
+############################## Django Admin Imports ##########################
+##############################################################################
+
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
-from .models import SetGoals, Users, ResumeCV, CoverLetter, AICategory, AISubcategory, FlashCardInterviewQuestion, \
-    FreeMockInterview, ProPilotLauncher, AiInterviewProPilot, AiProPilotLauncher, AiCodingMaths, \
-    AiCodingMathsProPilotLauncher, CoverLetterTemplate, ResumeTemplate, Temperature, UserDetails, Models, ModelChoice, \
-    TemperatureChoices, Images, MaxToken, GreetingMessage,ProgrammingLanguage,DeepgramLanguage, ProPilotSettings,propilottemp,Referral
+##############################################################################
+############################## Local Model Imports ###########################
+##############################################################################
 
+from .models import (
+    SetGoals, Users, ResumeCV, CoverLetter, FlashCardCategory, FlashCardSubcategory,
+    FlashCardInterviewQuestion, FreeMockInterview, ProPilotLauncher,
+    AiInterviewProPilot, AiProPilotLauncher, AiCodingMaths,
+    AiCodingMathsProPilotLauncher, CoverLetterTemplate, ResumeTemplate, UserDetails, 
+    Images, GreetingMessage, ProgrammingLanguage, DeepgramLanguage,
+    ProPilotSettings, propilottemp, Referral, BannerText,SettingsLauncherpropilot
+)
+
+# Set custom site header for Django admin
 admin.site.site_header = 'Cowin Admin'
 
+##############################################################################
+############################## Users #########################################
+##############################################################################
 
 @admin.register(Users)
 class UsersAdmin(admin.ModelAdmin):
     list_display = ('userId', 'profile', 'otp')
 
+##############################################################################
+############################## Set Goals #####################################
+##############################################################################
 
 @admin.register(SetGoals)
 class SetGoalsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'userId', 'company_name', 'position', 'programing_language', 'isActive')
+    list_display = ('id', 'userId', 'company_name', 'position', 'isActive')
     search_fields = ('userId', 'company_name', 'position', 'location')
     list_filter = ('isActive',)
 
+##############################################################################
+############################## Resume and Cover Letter #######################
+##############################################################################
 
 @admin.register(ResumeCV)
 class ResumeCVAdmin(admin.ModelAdmin):
@@ -27,27 +49,31 @@ class ResumeCVAdmin(admin.ModelAdmin):
     search_fields = ('CV_document', 'upload_date', 'isActive')
     list_filter = ('CV_document', 'upload_date', 'isActive')
 
-
 @admin.register(CoverLetter)
 class CoverLetterAdmin(admin.ModelAdmin):
     list_display = ('id', 'userId', 'Letter_document', 'upload_date', 'isActive')
     search_fields = ('Letter_document', 'upload_date', 'isActive')
     list_filter = ('Letter_document', 'upload_date', 'isActive')
 
+##############################################################################
+############################## AI Categories and Subcategories ###############
+##############################################################################
 
-@admin.register(AICategory)
+@admin.register(FlashCardCategory)
 class AICategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
     list_filter = ('name',)
 
-
-@admin.register(AISubcategory)
+@admin.register(FlashCardSubcategory)
 class AISubcategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
     list_filter = ('name',)
 
+##############################################################################
+############################## Flash Card Interview Questions ################
+##############################################################################
 
 @admin.register(FlashCardInterviewQuestion)
 class FlashCardInterviewQuestionAdmin(admin.ModelAdmin):
@@ -55,92 +81,91 @@ class FlashCardInterviewQuestionAdmin(admin.ModelAdmin):
     search_fields = ('question', 'answer', 'date_added', 'category', 'subcategory')
     list_filter = ('question', 'answer', 'date_added', 'category', 'subcategory')
 
+##############################################################################
+############################## Free Mock Interviews ###########################
+##############################################################################
 
-@admin.register(FreeMockInterview)
-class FreeMockInterview(admin.ModelAdmin):
-    list_display = ('id', 'userId', 'goals', 'InterviewTime', 'IsActive')
+# @admin.register(FreeMockInterview)
+# class FreeMockInterview(admin.ModelAdmin):
+#     list_display = ('id', 'userId', 'goals', 'InterviewTime', 'IsActive')
 
+##############################################################################
+############################## ProPilot Launcher #############################
+##############################################################################
 
-@admin.register(ProPilotLauncher)
-class ProPilotLauncher(admin.ModelAdmin):
-    list_display = ('id', 'userId', 'resume', 'cover_letter', 'position', 'additional_details')
+# @admin.register(ProPilotLauncher)
+# class ProPilotLauncher(admin.ModelAdmin):
+#     list_display = ('id', 'userId', 'resume', 'cover_letter', 'position', 'additional_details')
 
+##############################################################################
+############################## AI Interview ProPilot #########################
+##############################################################################
 
-@admin.register(AiInterviewProPilot)
-class FreeMockInterview(admin.ModelAdmin):
-    list_display = ('id', 'userId', 'goals', 'InterviewTime', 'IsActive')
+# @admin.register(AiInterviewProPilot)
+# class FreeMockInterview(admin.ModelAdmin):
+#     list_display = ('id', 'userId', 'goals', 'InterviewTime', 'IsActive')
 
+##############################################################################
+############################## AI ProPilot Launcher ##########################
+##############################################################################
 
 @admin.register(AiProPilotLauncher)
 class ProPilotLauncher(admin.ModelAdmin):
-    list_display = ('id', 'userId', 'resume', 'cover_letter', 'position', 'additional_details')
+    list_display = ('id', 'userId', 'resume', 'cover_letter', 'position')
 
+##############################################################################
+############################## AI Coding and Maths ###########################
+##############################################################################
 
-@admin.register(AiCodingMaths)
-class AiCodingMaths(admin.ModelAdmin):
-    list_display = ('id', 'userId', 'goals', 'IsActive')
+# @admin.register(AiCodingMaths)
+# class AiCodingMaths(admin.ModelAdmin):
+#     list_display = ('id', 'userId', 'goals', 'IsActive')
 
+# @admin.register(AiCodingMathsProPilotLauncher)
+# class AiCodingMathsProPilot(admin.ModelAdmin):
+#     list_display = ('id', 'userId', 'resume', 'cover_letter', 'programing_language', 'add_goal', 'additional_details', 'created_at')
 
-@admin.register(AiCodingMathsProPilotLauncher)
-class AiCodingMathsProPilot(admin.ModelAdmin):
-    list_display = (
-        'id', 'userId', 'resume', 'cover_letter', 'programing_language', 'add_goal', 'additional_details', 'created_at')
-
+##############################################################################
+############################## Resume and Cover Letter Templates #############
+##############################################################################
 
 @admin.register(ResumeTemplate)
 class ResumeTemp(admin.ModelAdmin):
     list_display = ('id', 'CV_template_Pdf', 'CV_template_Word', 'IsPaid')
-
 
 @admin.register(CoverLetterTemplate)
 class CoverLetterTemp(admin.ModelAdmin):
     list_display = ('id', 'CL_template_Pdf', 'CL_template_Word', 'IsPaid')
 
 
-@admin.register(TemperatureChoices)
-class TemperatureChoices(admin.ModelAdmin):
-    list_display = ('id', 'user', 'minimum_temperature', 'maximum_temperature', 'default_temperature')
+##############################################################################
+############################## User Details ###################################
+##############################################################################
+
+# @admin.register(UserDetails)
+# class Temperature(admin.ModelAdmin):
+#     list_display = ('id', 'user', 'latest_resume', 'latest_goal', 'latest_temperature', 'updated_at')
 
 
-@admin.register(Temperature)
-class Temperature(admin.ModelAdmin):
-    list_display = ('id', 'userId', 'temperature_choice', 'created_at')
-
-
-@admin.register(UserDetails)
-class Temperature(admin.ModelAdmin):
-    list_display = ('id', 'user', 'latest_resume', 'latest_goal', 'latest_temperature', 'updated_at')
-
-
-@admin.register(Models)
-class Models(admin.ModelAdmin):
-    list_display = ('id', 'model_name', 'created_at')
-
-
-@admin.register(ModelChoice)
-class ModelChoice(ModelAdmin):
-    list_display = ('id', 'choice')
-
+##############################################################################
+############################## Images ########################################
+##############################################################################
 
 @admin.register(Images)
 class ImageAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'image')
 
 
-@admin.register(MaxToken)
-class MaxToken(admin.ModelAdmin):
-    list_display = ('id', 'user', 'token', 'created_at')
-
+##############################################################################
+############################## Greeting Message ###############################
+##############################################################################
 
 @admin.register(GreetingMessage)
 class GreetingMessage(admin.ModelAdmin):
     list_display = ('id','message')
 
-
-
-
 ##############################################################################
-############################## Programming Languages  ########################
+############################## Programming Languages ########################
 ##############################################################################
 
 @admin.register(ProgrammingLanguage)
@@ -169,7 +194,6 @@ class ProPilotTempandverbosityAdmin(admin.ModelAdmin):
     search_fields = ('temp',)
     list_filter = ('temp',)
 
-
 ##############################################################################
 ############################## Pro Pilot Settings  ###########################
 ##############################################################################
@@ -189,3 +213,23 @@ class ReferralAdmin(admin.ModelAdmin):
     list_display = ('id','code', 'user', 'created_at')
     search_fields = ('code', 'user')
     list_filter = ('code', 'user')
+
+##############################################################################
+############################## Banner Text  ##################################
+##############################################################################
+
+@admin.register(BannerText)
+class BannerTextAdmin(admin.ModelAdmin):
+    list_display = ('id','text')
+    search_fields = ('text',)
+    list_filter = ('text',)
+
+##############################################################################
+############################## ProPilot settings Launcher  ###################
+##############################################################################
+
+@admin.register(SettingsLauncherpropilot)
+class ProPilotSettingsLauncherAdmin(admin.ModelAdmin):
+    list_display = ('id','user')
+    search_fields = ('user',)
+    list_filter = ('user',)
