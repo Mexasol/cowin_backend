@@ -1366,7 +1366,7 @@ def Perform_OCR_Api(request):
             return Response({"error": "Failed to open image from blob: {}".format(str(e))},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        if url == 'http://127.0.0.1:8000/text/':
+        if url == 'http://13.234.75.26:8000/text/':
             # Get the image file from the request
             tesseract_path = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
