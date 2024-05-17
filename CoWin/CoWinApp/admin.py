@@ -12,9 +12,9 @@ from django.contrib.admin import ModelAdmin
 from .models import (
     SetGoals, Users, ResumeCV, CoverLetter, FlashCardCategory, FlashCardSubcategory,
     FlashCardInterviewQuestion, FreeMockInterview, ProPilotLauncher,
-    AiInterviewProPilot, AiProPilotLauncher, AiCodingMaths,
+    AiInterviewProPilot, AiProPilotLauncher, AiCodingMaths,Payment,
     AiCodingMathsProPilotLauncher, CoverLetterTemplate, ResumeTemplate, UserDetails, 
-    Images, GreetingMessage, ProgrammingLanguage, DeepgramLanguage,
+    Images, GreetingMessage, ProgrammingLanguage, DeepgramLanguage,Contact,Packages,
     ProPilotSettings, propilottemp, Referral, BannerText,SettingsLauncherpropilot
 )
 
@@ -233,3 +233,33 @@ class ProPilotSettingsLauncherAdmin(admin.ModelAdmin):
     list_display = ('id','user')
     search_fields = ('user',)
     list_filter = ('user',)
+
+##############################################################################
+################################## Packages  #################################
+##############################################################################
+@admin.register(Packages)
+class PackagesAdmin(admin.ModelAdmin):
+    list_display = ('id','title', 'price')
+    search_fields = ('title',)
+    list_filter = ('title',)
+
+##############################################################################
+############################### Contact Us  ##################################
+##############################################################################
+
+@admin.register(Contact)
+class ContactUsAdmin(admin.ModelAdmin):
+    list_display = ('id','name', 'email', 'subject', 'message', 'created_at')
+    search_fields = ('name', 'email', 'subject', 'message')
+    list_filter = ('name', 'email', 'subject', 'message')
+
+##############################################################################
+####################################  Payment  ###############################
+##############################################################################
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('id','email','userId', 'packegeId', 'paymentCustId', 'paymentId', 'paymentPlan', 'type')
+    search_fields = ('email', 'amount', 'packegeId', 'type')
+    list_filter = ('email', 'amount', 'packegeId', 'type')
+

@@ -10,10 +10,10 @@ from .models import (
     SetGoals, ResumeCV, CoverLetter, FlashCardInterviewQuestion,
     FreeMockInterview, ProPilotLauncher, AiInterviewProPilot,SettingsLauncherpropilot,
     AiProPilotLauncher, AiCodingMaths, AiCodingMathsProPilotLauncher,
-    ResumeTemplate, CoverLetterTemplate,
+    ResumeTemplate, CoverLetterTemplate,Payment,
     Users, UserDetails, ProgrammingLanguage,
     DeepgramLanguage, ProPilotSettings, propilottemp, Referral,
-    BannerText
+    BannerText,Contact,Packages
 )
 
 
@@ -402,3 +402,27 @@ class BannerTextSerializer(serializers.ModelSerializer):
         model = BannerText
         fields = '__all__'
 
+##############################################################################
+################################## Contact  ##################################
+##############################################################################
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = ['id', 'name', 'email', 'subject', 'message', 'created_at']
+
+##############################################################################
+################################## Package  ##################################
+##############################################################################
+
+class PackagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Packages
+        fields = '__all__'
+
+##############################################################################
+####################################  Payment  ###############################
+##############################################################################
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'

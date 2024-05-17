@@ -95,6 +95,7 @@ urlpatterns = [
                   # ----------------- ProLauncher SECTION ------------------
                   path("api/ai-pro-luancher-create/", views.AiProPilotLauncherCreation,
                        name="AiProPilotLauncherCreation"),
+
                   path("api/ai-pro-luancher-data/", views.AiProPilotLauncherGet, name="AiProPilotLauncherGet"),
 
                   # ----------------- Ai Coding Maths SECTION ------------------
@@ -153,6 +154,20 @@ urlpatterns = [
                   # ----------------- propilot-settings ------------------
                   path('api/propilot-settings/', views.propilot_settings, name='propilot-settings'),
                   path('api/pro-pilot-temperatures-list/', views.pro_pilot_temperatures_list, name='pro_pilot_temperatures_list'),
+
+                  # ----------------- Contact ------------------
+                  path('api/contact/', views.contact_create, name='contact-create'),
+
+                  # ----------------- Package ------------------
+                  path("api/getallpackages/", views.getPackages, name="getallpackages"),
+                  path("api/getsinglepackage/<int:package_id>/", views.getPackagesbyid, name="getsinglepackage"),
+
+                  # ----------------- Payment ------------------
+                  path('api/payments/', views.create_payment, name='create_payment'),
+                  path('api/getPayment/', views.getPayment, name='get_payment'),
+    
+
+
 
 
 

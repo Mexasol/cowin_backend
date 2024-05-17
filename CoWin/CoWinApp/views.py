@@ -4,6 +4,7 @@ import uuid
 import random
 import string
 from datetime import timedelta, datetime
+import datetime 
 
 # Third-party imports
 from asgiref.sync import sync_to_async
@@ -18,6 +19,8 @@ from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework import status
+from django.core.mail import send_mail
+
 from rest_framework.decorators import (
     api_view, permission_classes, authentication_classes
 )
@@ -34,7 +37,7 @@ from .models import (
     AiProPilotLauncher, AiCodingMaths, AiCodingMathsProPilotLauncher,
     ResumeTemplate, CoverLetterTemplate, UserDetails, Images, GreetingMessage,
     ProgrammingLanguage, DeepgramLanguage, ProPilotSettings, propilottemp,
-    Referral, BannerText,SettingsLauncherpropilot
+    Referral, BannerText,SettingsLauncherpropilot,Packages,Contact,Payment
 )
 
 from .serializers import (
@@ -44,14 +47,14 @@ from .serializers import (
     FreeMockCreationSerializers, FreeMockGetSerializers,
     ResumeCvLookupsSerializer, CoverLetterLookupsSerializer,
     PositionLookupsSerializer, ProPilotLauncherSerializers,
-    AiInterviewCreationSerializers,
+    AiInterviewCreationSerializers,PackagesSerializer,
     AiProPilotLauncherSerializers, AiCodingMathsCreationSerializers,
     AiCodingMathsGetSerializers, AiCodingMathsProPilotSerializers,
     AiCodingProPilotSerializers,CvSerializer, CLSerializer,
-    UsersSerializer, UserDetailsSerializer,
+    UsersSerializer, UserDetailsSerializer,PaymentSerializer,
     ProgrammingLanguageSerializer, DeepgramlanguageSerializer,
     ProPilotSettingsSerializer, ProPilotTempandverbositySerializer,
-    BannerTextSerializer,PropilotSettingsLauncherSerializers
+    BannerTextSerializer,PropilotSettingsLauncherSerializers,ContactSerializer
 )
 
 from .utils import (
@@ -1867,5 +1870,136 @@ def propilot_settings(request):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+##############################################################################
+############################### Contact Us  ##################################
+##############################################################################
+
+@api_view(['POST'])
+def contact_create(request):
+    if request.method == 'POST':
+        serializer = ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            contact = serializer.save()
+            
+            # Send an email to the submitter
+            send_mail(
+                subject=f"Thank you for contacting us: {contact.subject}",
+                message=f"Hello {contact.name},\n\nThank you for reaching out to us. We have received your message:\n\n{contact.message}\n\nWe will get back to you shortly.\n\nBest regards,\nCowin.ai",
+                from_email='hi@cowin.ai',  # replace with your email
+                recipient_list=[contact.email],
+                fail_silently=False,
+            )
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+##############################################################################
+################################## Package  ##################################
+##############################################################################
+
+@api_view(['GET'])
+# @authentication_classes([])
+# @permission_classes([])
+def getPackages(request):
+    try:
+        serializer_context = {
+            'request': request,
+        }
+        queryset = Packages.objects.all()
+        serializer = PackagesSerializer(
+            queryset, many=True, context=serializer_context)
+        return Response(serializer.data)
+    except:
+        return Response(content={"response": "Something went wrong"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+# @authentication_classes([])
+# @permission_classes([])
+def getPackagesbyid(request, package_id):
+    try:
+        serializer_context = {
+            'request': request,
+        }
+        # id = request.GET.get('id')
+        queryset = Packages.objects.filter(id=package_id)
+        serializer = PackagesSerializer(
+            queryset, many=True, context=serializer_context)
+        return Response(serializer.data)
+    except:
+        return Response(content={"response": "Something went wrong"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+def create_payment(request):
+    # Verify token
+    token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
+    try:
+        access_token = AccessToken(token)
+        user_id = access_token['user_id']
+        user = User.objects.get(id=user_id)
+    except Exception as e:
+        return Response({'error': 'Invalid or expired token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # Extract data from request
+    data = request.data
+    email = data.get('email')
+    amount = data.get('amount')
+    payment_method_id = data.get('payment_method_id')
+    duration = data.get('duration')
+    paymentPlan = data.get('paymentPlan')
+    type = data.get('type')
+    description = data.get('description')
+    credits = data.get('credits')
+    noofmin = data.get('noofmin')
+    status_payment = data.get('status')
+    package_id = data.get('package_id')  # Ensure package_id is provided in request data
+
+    # Calculate dates
+    startDate = datetime.datetime.now()
+    endDate = startDate + datetime.timedelta(days=duration)
+    extra_msg = ''  # Add new variable to response message
+
+    # Create payment
+    try:
+        package = Packages.objects.get(id=package_id)
+        payment = Payment.objects.create(
+            userId=user,
+            packegeId=package,
+            paymentCustId=payment_method_id,
+            paymentPlan=paymentPlan,
+            type=type,
+            amount=amount,
+            email=email,
+            description=description,
+            credits=credits,
+            noofmin=noofmin,
+            status=status_payment,
+            startDate=startDate,
+            endDate=endDate
+        )
+        payment.save()
+
+        return Response(status=status.HTTP_200_OK, data={'message': 'Success', 'data': {'extra_msg': "payment succeeded"}})
+    except Packages.DoesNotExist:
+        return Response({'error': 'Package not found'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def getPayment(request):
+    try:
+        # Verify token
+        token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
+        access_token = AccessToken(token)
+        user_id = access_token['user_id']
+        user = User.objects.get(id=user_id)
+        
+        # Retrieve payments
+        serializer_context = {'request': request}
+        queryset = Payment.objects.filter(userId=user)
+        serializer = PaymentSerializer(queryset, many=True, context=serializer_context)
+        
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': 'Invalid or expired token'}, status=status.HTTP_401_UNAUTHORIZED)

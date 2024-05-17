@@ -242,3 +242,63 @@ class BannerText(models.Model):
 
     def __str__(self):
         return self.text
+    
+##############################################################################
+############################### Contact Us  ##################################
+##############################################################################
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+##############################################################################
+################################## Payment  ##################################
+##############################################################################
+class Packages(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=500, null=True, blank=True)
+    price = models.FloatField(null=True, blank=True)
+    duration = models.IntegerField(null=True, blank=True)
+    type = models.CharField(max_length=1000, null=True, blank=True)
+    credits = models.CharField(max_length=500, null=True, blank=True)
+    InterviewCoPilot = models.CharField(max_length=500, null=True, blank=True)
+    CodingMathsCoPilot = models.CharField(max_length=500, null=True, blank=True)
+    AILLM = models.CharField(max_length=500, null=True, blank=True) 
+    Performance = models.CharField(max_length=500, null=True, blank=True)
+    Latency = models.CharField(max_length=500, null=True, blank=True)
+    Resumegenerated = models.CharField(max_length=500, null=True, blank=True)
+    CoverLettergenerated = models.CharField(max_length=500, null=True, blank=True)
+    Flashcard = models.CharField(max_length=500, null=True, blank=True)
+    MockInterview = models.CharField(max_length=500, null=True, blank=True)
+    Mentorship = models.CharField(max_length=500, null=True, blank=True)
+    MenteeNetworking = models.CharField(max_length=500, null=True, blank=True)
+    HelpSupport = models.CharField(max_length=500, null=True, blank=True)
+    createdAt = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+
+class Payment(models.Model):
+    userId = models.ForeignKey(User,on_delete=models.CASCADE, null=True, blank=True, related_name='user_payment')
+    packegeId = models.ForeignKey(Packages,on_delete=models.CASCADE, null=True, blank=True)
+    paymentCustId = models.CharField(max_length=1000, null=True, blank=True)
+    paymentId = models.CharField(max_length=1000, null=True, blank=True)
+    paymentPlan = models.CharField(max_length=50, null=True, blank=True)
+    type = models.CharField(max_length=1000, null=True, blank=True)
+    amount = models.FloatField(null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    description = models.CharField(max_length=3000, null=True, blank=True)
+    credits = models.CharField(max_length=500, null=True, blank=True)
+    noofmin = models.CharField(max_length=500, null=True, blank=True)
+    status = models.CharField(max_length=50, null=True, blank=True)
+    startDate = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    endDate = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    createdAt = models.DateTimeField(auto_now_add=True, null=True, blank=True)    
+    updatedAt = models.DateTimeField(null=True, blank=True)
+    def __str__(self): 
+      return self.amount
+
+

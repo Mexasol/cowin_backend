@@ -113,6 +113,17 @@ WSGI_APPLICATION = 'CoWin.wsgi.application'
 # }
 
 
+# user=postgres.mbhzaqroulzgunkluiyg password=[YOUR-PASSWORD] host=aws-0-ap-south-1.pooler.supabase.com port=5432 dbname=postgres
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'Cowinai_db',
+#         'USER': 'Cowinai',
+#         'PASSWORD': 'Cowinai17123',
+#         'HOST': 'database-cowinai.ch86aum4a1k6.ap-south-1.rds.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -168,14 +179,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email Configuration
-# FRONT_END_URL = 'http://localhost:8000/reset-password/'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.titan.email'  # Outgoing SMTP server
-EMAIL_PORT = 587  # SMTP port for STARTTLS encryption
-EMAIL_USE_TLS = True  # Use TLS encryption for outgoing emails
-EMAIL_HOST_USER = 'hi@cowin.ai'
-EMAIL_HOST_PASSWORD = 'Cowinai@2024'
-DEFAULT_FROM_EMAIL = 'hi@cowin.ai'
 
 
 
