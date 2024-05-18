@@ -1510,9 +1510,9 @@ def get_greeting(request):
     
 
 def determine_greeting(current_time):
-    if current_time < datetime.strptime('12:00:00', '%H:%M:%S').time():
+    if current_time < datetime.datetime.strptime('12:00:00', '%H:%M:%S').time():
         return "Good Morning"
-    elif current_time < datetime.strptime('17:00:00', '%H:%M:%S').time():
+    elif current_time < datetime.datetime.strptime('17:00:00', '%H:%M:%S').time():
         return "Good Afternoon"
     else:
         return "Good Evening"
