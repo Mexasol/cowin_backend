@@ -147,7 +147,7 @@ def decode_image(image_path):
                 ]
             }
         ],
-        "max_tokens": 1000
+        "max_tokens": 3000
     }
     # start_time = time.time()
     try:

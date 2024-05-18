@@ -110,15 +110,7 @@ class ResetPasswordSerializer(serializers.Serializer):
 class SetGoalsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SetGoals
-        fields = [
-            'userId',
-            'id',
-            'position',
-            'company_name',
-            'programing_language',
-            'location',
-            'isActive'
-        ]
+        fields = '__all__'
 
 ##############################################################################
 ############################## Resume CV Serializer ##########################
@@ -127,13 +119,7 @@ class SetGoalsSerializer(serializers.ModelSerializer):
 class ResumeCVSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResumeCV
-        fields = [
-            'userId',
-            'id',
-            'CV_document',
-            'upload_date',
-            'isActive',
-        ]
+        fields = '__all__'
         extra_kwargs = {
             'isActive': {'required': False},
         }
@@ -154,13 +140,7 @@ class ResumeCVSerializer(serializers.ModelSerializer):
 class CoverLetterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CoverLetter
-        fields = [
-            'userId',
-            'id',
-            'Letter_document',
-            'upload_date',
-            'isActive',
-        ]
+        fields = '__all__'
 
     def get_cl_name(self, obj):
         cl_name = obj.Letter_document.name.split('/')[-1]
@@ -191,13 +171,7 @@ class FlashCardInterviewQuestionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FlashCardInterviewQuestion
-        fields = [
-            'id',
-            'question',
-            'answer',
-            'category_name',
-            'subcategory_name',
-        ]
+        fields = '__all__'
 
     def get_category_name(self, obj):
         return obj.category.name if obj.category else None
