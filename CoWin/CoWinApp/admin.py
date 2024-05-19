@@ -15,7 +15,7 @@ from .models import (
     AiInterviewProPilot, AiProPilotLauncher, AiCodingMaths,Payment,
     AiCodingMathsProPilotLauncher, CoverLetterTemplate, ResumeTemplate, UserDetails, 
     Images, GreetingMessage, ProgrammingLanguage, DeepgramLanguage,Contact,Packages,
-    ProPilotSettings, propilottemp, Referral, BannerText,SettingsLauncherpropilot
+    ProPilotSettings, propilottemp, Referral, BannerText,SettingsLauncherpropilot,isCompletedpropilotlaunch
 )
 
 # Set custom site header for Django admin
@@ -263,3 +263,8 @@ class PaymentAdmin(admin.ModelAdmin):
     search_fields = ('email', 'amount', 'packegeId', 'type')
     list_filter = ('email', 'amount', 'packegeId', 'type')
 
+@admin.register(isCompletedpropilotlaunch)
+class isCompletedpropilotlaunchAdmin(admin.ModelAdmin):
+    list_display = ('id','user')
+    search_fields = ('user',)
+    list_filter = ('user',)

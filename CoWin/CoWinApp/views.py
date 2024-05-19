@@ -3,7 +3,7 @@ import os
 import uuid
 import random
 import string
-from datetime import timedelta, datetime
+from datetime import timedelta
 import datetime 
 
 # Third-party imports
@@ -37,7 +37,7 @@ from .models import (
     AiProPilotLauncher, AiCodingMaths, AiCodingMathsProPilotLauncher,
     ResumeTemplate, CoverLetterTemplate, UserDetails, Images, GreetingMessage,
     ProgrammingLanguage, DeepgramLanguage, ProPilotSettings, propilottemp,
-    Referral, BannerText,SettingsLauncherpropilot,Packages,Contact,Payment
+    Referral, BannerText,SettingsLauncherpropilot,Packages,Contact,Payment,isCompletedpropilotlaunch
 )
 
 from .serializers import (
@@ -52,13 +52,13 @@ from .serializers import (
     AiCodingMathsGetSerializers, AiCodingMathsProPilotSerializers,
     AiCodingProPilotSerializers,CvSerializer, CLSerializer,
     UsersSerializer, UserDetailsSerializer,PaymentSerializer,
-    ProgrammingLanguageSerializer, DeepgramlanguageSerializer,
+    ProgrammingLanguageSerializer, DeepgramlanguageSerializer,IsCompletedSerializer,
     ProPilotSettingsSerializer, ProPilotTempandverbositySerializer,
     BannerTextSerializer,PropilotSettingsLauncherSerializers,ContactSerializer
 )
 
 from .utils import (
-    send_mail_using_smtp, perform_ocr, perform_ocr_recognition,
+    send_mail_using_smtp, perform_ocr,
     perform_ocr_detection, decode_image
 )
 
@@ -1348,7 +1348,12 @@ from django.core.files.base import ContentFile
 @permission_classes([IsAuthenticated])
 def Perform_OCR_Api(request):
     if request.method == 'POST':
-        user = request.user
+        # Extract token and verify user
+        token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
+        access_token = AccessToken(token)
+        user_id_from_token = access_token['user_id']
+        user = User.objects.get(id=user_id_from_token)
+        print(f"User: {user}, User ID: {user.id}")
         url = request.data.get('url')
         image_base64 = request.data.get('image_base64')
 
@@ -1371,42 +1376,37 @@ def Perform_OCR_Api(request):
 
         if url == 'http://13.234.75.26:8000/text/':
             # Get the image file from the request
-            tesseract_path = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+            tesseract_path = r'/usr/bin/tesseract'
 
             # Perform OCR on the image
             extracted_image_text = perform_ocr(image, tesseract_path)
             extracted_image = [line.strip() for line in extracted_image_text.split('\n') if line.strip()]
 
-            # Get the latest resume object
-            resume = ResumeCV.objects.filter(userId=user, isActive=True).order_by('-id').first()
-            if resume:
-                resume_file_path = resume.CV_document.path
-            else:
-                return Response({"error": "Resume not found"}, status=status.HTTP_400_BAD_REQUEST)
-
+            print(f"Extracted Image: {extracted_image}")
+            
             # Perform OCR recognition on the retrieved resume
-            extracted_resume = perform_ocr_recognition(resume_file_path)
-            extracted_resume = [line.strip() for line in extracted_resume.split('\n') if
-                                line.strip() and "•" not in line]
+            # extracted_resume = perform_ocr_recognition(resume_file_path)
+            # extracted_resume = [line.strip() for line in extracted_resume.split('\n') if
+            #                     line.strip() and "•" not in line]
 
             # Get the latest goal object
             goal = SetGoals.objects.filter(userId=user, isActive=True).order_by('-id').first()
+            propolitsettings = ProPilotSettings.objects.filter(user=user).first()
             if goal:
                 goal_position = goal.position
-                goal_programing_language = goal.programing_language
             else:
                 return Response({"error": "no goal exist"}, status=status.HTTP_400_BAD_REQUEST)
 
-            UserDetails.objects.update_or_create(
-                user=user,
-                defaults={
-                    'latest_resume': extracted_resume,
-                    'latest_goal': goal_position,
-                }
-            )
+            pro_verbosity = propolitsettings.verbosity
+            programing_language = propolitsettings.programming_language
+            natrule_language = propolitsettings.deepgram_language
+            propolit_temp = propolitsettings.propilot_temp
+            print('-----------------------------------------ht1')
+            print(goal_position, pro_verbosity, programing_language, natrule_language, propolit_temp)
+            print('-----------------------------------------ht1')
             # Perform OCR detection
-            chatbot_response = perform_ocr_detection(extracted_image, goal_programing_language, goal_position,
-                                                     extracted_resume)
+            chatbot_response = perform_ocr_detection(extracted_image, programing_language, goal_position,
+                                                     pro_verbosity, natrule_language, propolit_temp)
             chatbot = chatbot_response.split('\n')
             chatbot_response = [line.strip() for line in chatbot if line.strip()]
             # user_details = get_object_or_404(UserDetails, user=user)
@@ -1496,7 +1496,7 @@ def UserData(request):
 
 @api_view(['GET'])
 def get_greeting(request):
-    current_time = datetime.now().time()
+    current_time = datetime.datetime.now().time()
     greeting = determine_greeting(current_time)
 
     try:
@@ -2003,3 +2003,77 @@ def getPayment(request):
         return Response(serializer.data)
     except Exception as e:
         return Response({'error': 'Invalid or expired token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# Helper function to get user from token
+# def get_user_from_token(request):
+#     try:
+#         token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
+#         access_token = AccessToken(token)
+#         user_id_from_token = access_token['user_id']
+#         user = User.objects.get(id=user_id_from_token)
+#         return user
+#     except Exception as e:
+#         return None
+
+# isCompleted Views
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def iscompleted_list(request):
+    user = get_user_from_token(request)
+    if not user:
+        return Response({'detail': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if request.method == 'GET':
+        # Fetch data from isCompletedpropilotlaunch table
+        items = isCompletedpropilotlaunch.objects.filter(user=user)
+        serializer = IsCompletedSerializer(items, many=True)
+        return Response(serializer.data)
+    
+    if request.method == 'POST':
+        # Fetch data from SettingsLauncherpropilot table
+        settings_data = SettingsLauncherpropilot.objects.filter(user=user).first()
+        if not settings_data:
+            return Response({'detail': 'SettingsLauncherpropilot data not found for the user'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create an entry in the isCompletedpropilotlaunch table with the fetched data
+        serializer = IsCompletedSerializer(data={
+            'user': user.id,
+            'position': settings_data.position,
+            'company': settings_data.company,
+            'is_completed': settings_data.is_completed
+        })
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def iscompleted_detail(request, pk):
+    user = get_user_from_token(request)
+    if not user:
+        return Response({'detail': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    try:
+        item = isCompletedpropilotlaunch.objects.get(pk=pk, user=user)
+    except isCompletedpropilotlaunch.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = IsCompletedSerializer(item)
+        return Response(serializer.data)
+    
+    if request.method == 'PATCH':
+        serializer = IsCompletedSerializer(item, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'DELETE':
+        item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

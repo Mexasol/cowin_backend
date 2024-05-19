@@ -42,20 +42,21 @@ def perform_ocr(image_path, tesseract_path):
 
 
 # ocr_resume
-def perform_ocr_recognition(resume):
-    doc = fitz.open(resume)
-    text = ""
-    for page in doc:
-        text = text + page.get_text()
-    return text
+# def perform_ocr_recognition(resume):
+#     doc = fitz.open(resume)
+#     text = ""
+#     for page in doc:
+#         text = text + page.get_text()
+#     return text
 
 
-def perform_ocr_detection(question, programming_language, user_position, resume_data, temperature, latest_model_value,
-                          latest_token):
+def perform_ocr_detection(question, programming_language, user_position, pro_verbosity,natrule_language,propolit_temp):
     coding_Interview_Question = question
     programming_Language = programming_language
     user_role = user_position
-    resume_data = resume_data
+    lengthofAnswer = pro_verbosity
+    language = natrule_language
+    propilot_temp = propolit_temp
 
     client = Groq(
         api_key=''
@@ -84,10 +85,8 @@ def perform_ocr_detection(question, programming_language, user_position, resume_
     
                     User Information:
                     Role: {user_role} (For the user's interest only; do not include in the answer)
-    
-                    User CV Data:{resume_data}(For interview purposes only; extract relevant information as per custom instructions)
-    
-                    User Cover Letter Data:{resume_data}(For interview purposes only; extract relevant information as per custom instructions)
+                    Length of Answer: {lengthofAnswer} (For the user's interest only; do not include in the answer)
+                    Preferred Language: {language} (For the user's interest only; do not include in the answer)
     
                     Provide a concise overview of the coding interview question without including the actual code.Focus on conveying the main idea and key points of the question.
     
@@ -147,7 +146,7 @@ def decode_image(image_path):
                 ]
             }
         ],
-        "max_tokens": 3000
+        "max_tokens": 1000
     }
     # start_time = time.time()
     try:

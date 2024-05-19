@@ -157,13 +157,22 @@ class SettingsLauncherpropilot(models.Model):
     goals = models.CharField(max_length=500, null=True, blank=True)
     position = models.CharField(max_length=500)
     company = models.CharField(max_length=500)
-    interviewtime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    interviewtime = models.DateTimeField(auto_now_add=True, null=True, blank=True)  # Ensure this field is DateTimeField
     is_completed = models.BooleanField(default=False)
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"SettingsLauncherpropilot for {self.user.username}"
+##############################################################################
+##################### is Completed propilot setting  #########################
+##############################################################################
 
+class isCompletedpropilotlaunch(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    position = models.CharField(max_length=500, null=True, blank=True)
+    company = models.CharField(max_length=500, null=True, blank=True)
+    interviewtime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
 
 ##############################################################################
 ############################## GreetingMessage ###############################

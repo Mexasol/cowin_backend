@@ -154,6 +154,8 @@ urlpatterns = [
                   # ----------------- propilot-settings ------------------
                   path('api/propilot-settings/', views.propilot_settings, name='propilot-settings'),
                   path('api/pro-pilot-temperatures-list/', views.pro_pilot_temperatures_list, name='pro_pilot_temperatures_list'),
+                  path('api/propolit-launcher-join/', views.iscompleted_list, name='iscompleted_list'),
+                  path('api/propolit-launcher-join/<int:pk>/', views.iscompleted_detail, name='iscompleted_detail'),
 
                   # ----------------- Contact ------------------
                   path('api/contact/', views.contact_create, name='contact-create'),

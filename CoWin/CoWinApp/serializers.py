@@ -13,7 +13,7 @@ from .models import (
     ResumeTemplate, CoverLetterTemplate,Payment,
     Users, UserDetails, ProgrammingLanguage,
     DeepgramLanguage, ProPilotSettings, propilottemp, Referral,
-    BannerText,Contact,Packages
+    BannerText,Contact,Packages,isCompletedpropilotlaunch,
 )
 
 
@@ -399,4 +399,10 @@ class PackagesSerializer(serializers.ModelSerializer):
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
+        fields = '__all__'
+
+
+class IsCompletedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = isCompletedpropilotlaunch
         fields = '__all__'
